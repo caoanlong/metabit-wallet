@@ -1,0 +1,14 @@
+com/metabitwallet/MainActivity.java
+ com.metabitwallet.MainActivity
+com/metabitwallet/ReactNativeFlipper.java
+ com.metabitwallet.ReactNativeFlipper
+ com.metabitwallet.ReactNativeFlipper$1
+ com.metabitwallet.ReactNativeFlipper$2
+ com.metabitwallet.ReactNativeFlipper$2$1
+com/metabitwallet/BuildConfig.java
+ com.metabitwallet.BuildConfig
+com/metabitwallet/MainApplication.java
+ com.metabitwallet.MainApplication
+ com.metabitwallet.MainApplication$1
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList

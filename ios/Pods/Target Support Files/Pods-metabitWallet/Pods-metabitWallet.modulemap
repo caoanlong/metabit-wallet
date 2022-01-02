@@ -1,0 +1,6 @@
+module Pods_metabitWallet {
+  umbrella header "Pods-metabitWallet-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+module Pods_metabitWallet_metabitWalletTests {
+  umbrella header "Pods-metabitWallet-metabitWalletTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
