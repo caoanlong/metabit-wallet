@@ -1,16 +1,22 @@
-import { ParamListBase, useNavigation } from "@react-navigation/core"
+import { ParamListBase, useNavigation, useRoute } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import React, { useState } from "react"
-import { Pressable, Text, View } from "react-native"
-import { useSelector } from "react-redux"
+import { Alert, Pressable, Text, View } from "react-native"
+import { useDispatch, useSelector } from "react-redux"
 import tailwind from "tailwind-rn"
 import lodash from 'lodash'
 import { RootState } from "../../store"
+import { createWallet } from "../../store/actions/walletAction"
+
+export interface FromGenerateMnemobicParams {
+    mnemonic: string[]
+}
 
 function ConfirmMnemonic() {
+    const route = useRoute()
+    const { mnemonic } = route.params as FromGenerateMnemobicParams
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-    const mnemonic = selectedWallet?.mnemonic?.phrase?.split(' ')
+    const dispatch = useDispatch()
     // 数组打乱
     const [ randomMnemonics, setRandomMnemonics ] = useState<string[]>(lodash.shuffle(mnemonic ? [...mnemonic] : []))
     const [ selected, setSelected ] = useState<string[]>(Array.apply(null, Array(12)).map(() => ''))
@@ -80,11 +86,16 @@ function ConfirmMnemonic() {
                 }
             </View>
             <Pressable 
-                disabled={selected.join(' ') !== selectedWallet?.mnemonic?.phrase}
+                disabled={selected.join('') !== mnemonic.join('')}
                 onPress={() => {
-                    navigation.replace('main')
+                    try {
+                        dispatch(createWallet(mnemonic.join(' ')))
+                        navigation.replace('main')
+                    } catch (error: any) {
+                        Alert.alert(error)
+                    }
                 }}
-                style={tailwind(`py-3 rounded-full ${selected.join(' ') !== selectedWallet?.mnemonic?.phrase ? 'bg-blue-200' : 'bg-blue-600'}`)}>
+                style={tailwind(`py-3 rounded-full ${selected.join('') !== mnemonic.join('') ? 'bg-blue-200' : 'bg-blue-600'}`)}>
                 <Text style={tailwind(`text-white text-lg text-center`)}>完成</Text>
             </Pressable>
         </View>

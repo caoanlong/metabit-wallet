@@ -6,14 +6,12 @@ import { useDispatch } from "react-redux"
 import tailwind from "tailwind-rn"
 import ConfirmMnemonic from "./ConfirmMnemonic"
 import GenerateMnemonic from "./GenerateMnemonic"
-import { CLEAR_WALLET } from "../../store/constants"
 
 const Stack = createNativeStackNavigator()
 
 
 function AddWallet() {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const dispatch = useDispatch()
     return (
         <Stack.Navigator initialRouteName="generateMnemonic">
             <Stack.Screen 
@@ -27,7 +25,6 @@ function AddWallet() {
                             labelVisible={false}
                             tintColor={tintColor}
                             onPress={() => {
-                                dispatch({ type: CLEAR_WALLET })
                                 navigation.goBack()
                             }}
                         />

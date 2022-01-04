@@ -1,21 +1,21 @@
 import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Pressable, Text, View } from "react-native"
 import tailwind from "tailwind-rn"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../../store"
-import { createWallet } from "../../store/actions/walletAction"
+import { createWalletByMnemonic } from "../../utils"
 
 function GenerateMnemonic() {
-    const dispatch = useDispatch()
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-    const mnemonic = selectedWallet?.mnemonic?.phrase?.split(' ')
+    const [ mnemonic, setMnemonic ] = useState<string[]>([])
 
     useEffect(() => {
-        dispatch(createWallet())
+        const root = createWalletByMnemonic()
+        if (root && root.mnemonic && root.mnemonic.phrase) {
+            setMnemonic(root.mnemonic.phrase.split(' '))
+        }
     }, [])
+
     return (
         <View style={tailwind(`p-4 h-full bg-white`)}>
             <Text style={tailwind(`text-lg text-center mb-3`)}>写下您的助记词</Text>
@@ -28,7 +28,7 @@ function GenerateMnemonic() {
                     borderWidth: 0.5, 
                 }}>
                 {
-                    mnemonic?.map((item: string, i: number) => (
+                    mnemonic.map((item: string, i: number) => (
                         <View 
                             key={i}
                             style={{ 
@@ -50,7 +50,9 @@ function GenerateMnemonic() {
                 }
             </View>
             <Pressable 
-                onPress={() => navigation.push('confirmMnemonic')}
+                onPress={() => {
+                    navigation.push('confirmMnemonic', { mnemonic })
+                }}
                 style={tailwind(`py-3 rounded-full bg-blue-600`)}>
                 <Text style={tailwind(`text-white text-lg text-center`)}>下一步</Text>
             </Pressable>

@@ -14,7 +14,6 @@ import { RootState } from './store'
 import Networks from './views/Networks'
 import AddToken from './views/AddToken'
 import Wallets from './views/Wallets'
-import SubWallets from './views/Wallets/SubWallets'
 
 
 const Stack = createNativeStackNavigator()
@@ -146,13 +145,6 @@ const App = () => {
 						name="wallets" 
 						component={Wallets}
 						options={{ headerShown: false }}
-					/>
-					<Stack.Screen 
-						name="subWallets" 
-						component={SubWallets} 
-						options={{
-							headerTitle: '钱包'
-						}}
 					/>
 					<Stack.Screen 
 						name="addWallet" 

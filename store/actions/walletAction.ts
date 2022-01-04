@@ -1,6 +1,7 @@
 import { ethers, Wallet } from "ethers"
 import { Dispatch, AnyAction } from "redux"
 import WalletEngine from "../../engine/WalletEngine"
+import { createWalletByMnemonic } from "../../utils"
 import { createHDWallet, createWalletByPrivateKey, deriveWallet } from "../../utils/wallet"
 import { 
     ADD_TOKEN, 
@@ -19,21 +20,7 @@ import {
 // e7282b6964b2792925cb486550a0eec1a28e908d638b3e8e48be0146703cc960
 export const createWallet = (mnemonic?: string) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        let index = 1
-        const wallets: HDWallet[] = getState().wallet.wallets
-        const roots = wallets.filter((item: HDWallet) => item.type === -1)
-        if (roots.length) {
-            const maxIndex = Math.max(...roots.map((item: HDWallet) => item.index))
-            index = maxIndex + 1
-        }
-        const root: HDWallet = createHDWallet({ mnemonic, index })
-        // 默认创建比特币和以太坊钱包
-        const btc = deriveWallet(root, 0)
-        const eth = deriveWallet(root, 60)
-        const trx = deriveWallet(root, 195)
-        // engine.addWallet([ root.wallet, btc.wallet, eth.wallet, trx.wallet ])
-        if (!root.children) root.children = []
-        root.children.push(btc, eth, trx)
+        const root = createWalletByMnemonic(mnemonic)
         dispatch({
             type: CREATE_WALLET,
             payload: root
