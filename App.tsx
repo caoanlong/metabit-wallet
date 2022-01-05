@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { Pressable, StatusBar, Text, useColorScheme } from 'react-native'
+import { Pressable, StatusBar, Text, useColorScheme, View } from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { useDispatch, useSelector } from 'react-redux'
 import Main from './views/Main'
@@ -14,6 +14,9 @@ import { RootState } from './store'
 import Networks from './views/Networks'
 import AddToken from './views/AddToken'
 import Wallets from './views/Wallets'
+import tailwind from 'tailwind-rn'
+import { ScreenStackHeaderConfig } from 'react-native-screens'
+import WalletInfo from './views/Wallets/WalletInfo'
 
 
 const Stack = createNativeStackNavigator()
@@ -144,7 +147,16 @@ const App = () => {
 					<Stack.Screen 
 						name="wallets" 
 						component={Wallets}
-						options={{ headerShown: false }}
+						options={{ 
+							headerShown: false
+						}}
+					/>
+					<Stack.Screen 
+						name="walletInfo" 
+						component={WalletInfo}
+						options={{ 
+							headerShown: false
+						}}
 					/>
 					<Stack.Screen 
 						name="addWallet" 

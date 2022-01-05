@@ -8,7 +8,8 @@ import {
     ADD_CHILD_WALLET, 
     CHANGE_WALLET, 
     CREATE_WALLET, 
-    DEL_TOKEN
+    DEL_TOKEN,
+    DEL_ROOT_WALLET
 } from "../constants"
 
 // const engine = WalletEngine.getInstance()
@@ -28,6 +29,17 @@ export const createWallet = (mnemonic?: string) => {
         dispatch({
             type: CHANGE_WALLET,
             payload: root
+        })
+    }
+}
+
+export const delRootWallet = (publicKey: string) => {
+    return (dispatch: Dispatch<AnyAction>, getState: any) => {
+        const wallets: HDWallet[] = getState().wallet.wallets
+        const list = wallets.filter((item: HDWallet) => item.publicKey !== publicKey)
+        dispatch({
+            type: DEL_ROOT_WALLET,
+            payload: list
         })
     }
 }

@@ -245,7 +245,7 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
         compressPublicKey: '0x' + compressPublicKey.toString('hex'),
         chainCode: '0x' + IR.toString('hex'),
         path: getPath(coinType, index),
-        name: COIN_NAME_TYPE[coinType] + 'Wallet',
+        name: COIN_NAME_TYPE[coinType] + ' Wallet',
         address,
         type: coinType,
         index: index + 1,
