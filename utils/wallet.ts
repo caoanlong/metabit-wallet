@@ -18,7 +18,7 @@ const THROW_BAD_TWEAK = 'Expected Tweak'
 
 const HIGHEST_BIT = 0x80000000
 
-const COIN_NAME_TYPE: {[key: number]: string} ={
+export const COIN_NAME_TYPE: {[key: number]: string} ={
     0: 'Bitcoin',
     60: 'Ethereum',
     195: 'Tron'
@@ -292,7 +292,7 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
  * @param coinType 
  * @returns 
  */
-export function createWalletByPrivateKey(privateKey: string, coinType: number): HDWallet {
+export function createWalletByPrivateKey(privateKey: string, coinType: number, index: number = 1): HDWallet {
     const privKey: Buffer = hexStrToBuf(privateKey)
     const { publicKey, compressPublicKey } = getPubkeyFromPrikey(privKey)
     const address = getAddress(privKey, coinType)
@@ -302,8 +302,8 @@ export function createWalletByPrivateKey(privateKey: string, coinType: number): 
         compressPublicKey: '0x' + compressPublicKey.toString('hex'),
         chainCode: '',
         address,
-        name: 'item',
+        name: COIN_NAME_TYPE[coinType] + ' Wallet',
         type: coinType,
-        index: 1
+        index
     }
 }

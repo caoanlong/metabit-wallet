@@ -11,6 +11,7 @@ import tailwind from "tailwind-rn"
 import { Colors } from "react-native/Libraries/NewAppScreen"
 import { useDispatch } from "react-redux"
 import { delRootWallet } from "../../store/actions/walletAction"
+import { COIN_NAME_TYPE } from "../../utils/wallet"
 
 function WalletInfo() {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
@@ -34,7 +35,7 @@ function WalletInfo() {
                 <Header 
                     headerLeftContainerStyle={tailwind(`pl-2`)}
                     headerRightContainerStyle={tailwind(`pr-2`)}
-                    title={'HD钱包详情'} 
+                    title={parent.address ? '币种钱包详情' : 'HD钱包详情'} 
                     headerLeft={() => (
                         <HeaderBackButton 
                             onPress={navigation.goBack} 
@@ -64,6 +65,33 @@ function WalletInfo() {
                             { name }
                         </Text>
                     </View>
+                    {
+                        parent.address ?
+                        <>
+                            <View 
+                                style={{
+                                    ...tailwind(`flex flex-row bg-white px-3 py-5`),
+                                    borderColor: '#ddd',
+                                    borderBottomWidth: 0.5
+                                }}>
+                                <Text style={tailwind(`text-base mr-3`)}>区块链网络</Text>
+                                <Text style={tailwind(`flex-1 text-base text-right`)}>
+                                    { COIN_NAME_TYPE[parent.type] }
+                                </Text>
+                            </View>
+                            <View 
+                                style={{
+                                    ...tailwind(`flex flex-row bg-white px-3 py-5`),
+                                    borderColor: '#ddd',
+                                    borderBottomWidth: 0.5
+                                }}>
+                                <Text style={tailwind(`text-base mr-3`)}>地址</Text>
+                                <Text style={tailwind(`flex-1 text-base text-right`)}>
+                                    { parent.address }
+                                </Text>
+                            </View>
+                        </> : <></>
+                    }
                     <View
                         style={{
                             ...tailwind(`relative bg-white py-3 px-2`),
@@ -79,7 +107,11 @@ function WalletInfo() {
                                             setShowMnemonic(true)
                                         }}
                                         style={tailwind(`w-32 h-10 bg-blue-600 rounded-full flex items-center justify-center`)}>
-                                        <Text style={tailwind(`text-white text-sm text-center`)}>查看助记词</Text>
+                                        <Text style={tailwind(`text-white text-sm text-center`)}>
+                                            {
+                                                parent.address ? '查看私钥' : '查看助记词'
+                                            }
+                                        </Text>
                                     </Pressable>
                                 </View>
                                 <BlurView
@@ -90,31 +122,38 @@ function WalletInfo() {
                                 />
                             </>
                         }
-                        <Text style={tailwind(`text-base`)}>{parent.mnemonic?.phrase}</Text>
+                        <Text style={tailwind(`text-base`)}>
+                            {parent.address ? parent.privateKey : parent.mnemonic?.phrase}
+                        </Text>
                         <Pressable 
-                            onPress={() => Clipboard.setString(parent.mnemonic?.phrase ?? '')}>
+                            onPress={() => Clipboard.setString(parent.address ? parent.privateKey : (parent.mnemonic?.phrase ?? ''))}>
                             <Text style={tailwind(`text-yellow-500 text-base text-center`)}>点击复制</Text>
                         </Pressable>
                     </View>
-                    <Text style={tailwind(`px-3 py-4 text-sm text-gray-600`)}>币种钱包</Text>
-                    <View>
-                        {
-                            parent.children?.map((wallet: HDWallet) => (
-                                <Pressable 
-                                    onPress={() => {
-                                        
-                                    }}
-                                    key={wallet.chainCode}>
-                                    <View style={tailwind(`flex flex-row items-center p-4 bg-white mb-2`)}>
-                                        <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
-                                        <View style={tailwind(`flex-1 pl-4`)}>
-                                            <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
-                                        </View>
-                                    </View>
-                                </Pressable>
-                            ))
-                        }
-                    </View>
+                    {
+                        parent.address ? <></> : 
+                        <>
+                            <Text style={tailwind(`px-3 py-4 text-sm text-gray-600`)}>币种钱包</Text>
+                            <View>
+                                {
+                                    parent.children?.map((wallet: HDWallet) => (
+                                        <Pressable 
+                                            onPress={() => {
+                                                
+                                            }}
+                                            key={wallet.chainCode}>
+                                            <View style={tailwind(`flex flex-row items-center p-4 bg-white mb-2`)}>
+                                                <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
+                                                <View style={tailwind(`flex-1 pl-4`)}>
+                                                    <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
+                                                </View>
+                                            </View>
+                                        </Pressable>
+                                    ))
+                                }
+                            </View>
+                        </>
+                    }
                 </View>
                 <Modal 
                     isVisible={showModal}

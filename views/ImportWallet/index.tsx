@@ -1,59 +1,109 @@
-import { ParamListBase, useNavigation } from "@react-navigation/core"
+import { ParamListBase, useNavigation, useRoute } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import React, { useState } from "react"
-import { Alert, Platform, Pressable, StatusBar, Text, TextInput, useColorScheme, View } from "react-native"
+import { Alert, Pressable, Text, TextInput, View } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
+import Clipboard from '@react-native-clipboard/clipboard'
 import tailwind, { getColor } from "tailwind-rn"
 import { useDispatch } from 'react-redux'
-import { createWallet } from "../../store/actions/walletAction"
+import { createWallet, importWalletByPrivateKey } from "../../store/actions/walletAction"
 
 function ImportWallet() {
-    const isDarkMode = useColorScheme() === 'dark'
+    const route = useRoute()
+    const type = (route.params as any).type as string
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const dispatch = useDispatch()
     const [ text, setText ] = useState<string>('')
+    const [ coinType, setCoinType ] = useState<number>(60)
     return (
-        <View style={tailwind(`h-full bg-white`)}>
-            <StatusBar
-                barStyle={Platform.select({ ios: 'light-content', default: isDarkMode ? 'light-content' : 'dark-content' })}
-            />
-            <View style={tailwind(`h-14 flex flex-row`)}>
-                <View style={tailwind(`w-14`)}></View>
-                <View style={tailwind(`flex-1 flex justify-center items-center`)}>
-                    <Text style={tailwind(`text-lg`)}>从助记词导入</Text>
-                </View>
+        <>
+            <View style={tailwind(`flex flex-row bg-white h-14`)}>
                 <Pressable 
                     onPress={() => navigation.goBack()}
-                    style={tailwind(`w-14 flex justify-center items-center`)}>
-                    <Icon name="close" size={26} color={getColor('blue-600')} />
+                    style={tailwind(`w-12 flex justify-center items-center`)}>
+                    <Icon name="chevron-back" size={24} color={getColor('blue-600')} />
                 </Pressable>
-            </View>
-            <View style={tailwind(`p-4`)}>
-                <TextInput
-                    style={{
-                        ...tailwind(`h-36 p-3 text-base rounded-md bg-gray-100 border-gray-200`),
-                        borderWidth: 0.5
-                    }}
-                    multiline
-                    numberOfLines={10}
-                    onChangeText={text => setText(text)}
-                    value={text}
-                />
+                <View style={tailwind(`flex-1 flex justify-center`)}>
+                    <Text style={tailwind(`text-base text-center text-black`)}>
+                        { type === 'mnemonic' ? '从助记词导入' : '从私钥导入'}
+                    </Text>
+                </View>
                 <Pressable 
-                    disabled={!text.trim()}
-                    onPress={() => {
-                        try {
-                            dispatch(createWallet(text.trim()))
-                            navigation.replace('main')
-                        } catch (error: any) {
-                            Alert.alert(error)
-                        }
+                    onPress={async () => {
+                        const txt = await Clipboard.getString()
+                        setText(txt)
                     }}
-                    style={tailwind(`mt-8 py-3 rounded-full mb-16 ${!text.trim() ? 'bg-blue-200' : 'bg-blue-600'}`)}>
-                    <Text style={tailwind(`text-white text-lg text-center`)}>导入</Text>
+                    style={tailwind(`w-12 flex items-center justify-center`)}>
+                    <Text style={tailwind(`text-blue-600`)}>粘贴</Text>
                 </Pressable>
             </View>
-        </View>
+            <View style={tailwind(`h-full bg-white`)}>
+                <View style={tailwind(`p-4`)}>
+                    <TextInput
+                        style={{
+                            ...tailwind(`h-36 p-3 text-base rounded-md bg-gray-100 border-gray-200`),
+                            borderWidth: 0.5
+                        }}
+                        multiline
+                        numberOfLines={10}
+                        onChangeText={t => {
+                            console.log(t)
+                            setText(t)
+                        }}
+                        value={text}
+                    />
+                    {
+                        type !== 'mnemonic' ? 
+                        <>
+                            <Text style={tailwind(`py-2 text-gray-500`)}>请选择区块链网络</Text>
+                            <View style={tailwind(`flex flex-row flex-wrap`)}>
+                                <Pressable 
+                                    onPress={() => setCoinType(60)}
+                                    style={{ 
+                                        ...tailwind(`${coinType === 60 ? 'bg-green-500' : 'border-gray-400'} flex items-center py-1 rounded-md`),
+                                        width: '30%',
+                                        borderWidth: coinType === 60 ? 0 : 0.5,
+                                    }}>
+                                    <Text style={tailwind(`${coinType === 60 ? 'text-white' : 'text-gray-400'} text-base`)}>Ethereum</Text>
+                                </Pressable>
+                                <Pressable 
+                                    onPress={() => setCoinType(195)}
+                                    style={{ 
+                                        ...tailwind(`${coinType === 195 ? 'bg-green-500' : 'border-gray-400'} flex items-center py-1 rounded-md`),
+                                        width: '30%',
+                                        borderWidth: coinType === 195 ? 0 : 0.5,
+                                        marginLeft: '5%',
+                                        marginRight: '5%'
+                                    }}>
+                                    <Text style={tailwind(`${coinType === 195 ? 'text-white' : 'text-gray-400'} text-base`)}>Tron</Text>
+                                </Pressable>
+                            </View>
+                        </> : 
+                        <Text style={tailwind(`text-gray-500 py-2`)}>
+                            使用助记词导入默认创建以太坊和波场钱包，如需添加其他钱包，导入后进入钱包详情进行派生
+                        </Text>
+                    }
+                    
+                    <Pressable 
+                        disabled={!text.trim()}
+                        onPress={() => {
+                            try {
+                                if (type === 'mnemonic') {
+                                    dispatch(createWallet(text.trim()))
+                                } else if (type === 'privateKey') {
+                                    dispatch(importWalletByPrivateKey(text.trim(), coinType))
+                                }
+                                navigation.replace('main')
+                            } catch (error: any) {
+                                Alert.alert(error)
+                            }
+                        }}
+                        style={tailwind(`mt-8 py-3 rounded-full mb-16 ${!text.trim() ? 'bg-blue-200' : 'bg-blue-600'}`)}>
+                        <Text style={tailwind(`text-white text-lg text-center`)}>导入</Text>
+                    </Pressable>
+                </View>
+            </View>
+        </>
     )
 }
 

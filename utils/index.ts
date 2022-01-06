@@ -34,12 +34,12 @@ export function createWalletByMnemonic(mnemonic?: string): HDWallet {
     }
     
     const root: HDWallet = createHDWallet({ mnemonic, index })
-    // 默认创建比特币和以太坊钱包
-    const btc = deriveWallet(root, 0)
+    // 默认创建以太坊钱包和波场
+    // const btc = deriveWallet(root, 0)
     const eth = deriveWallet(root, 60)
     const trx = deriveWallet(root, 195)
     // engine.addWallet([ root.wallet, btc.wallet, eth.wallet, trx.wallet ])
     if (!root.children) root.children = []
-    root.children.push(btc, eth, trx)
+    root.children.push(eth, trx)
     return root
 }

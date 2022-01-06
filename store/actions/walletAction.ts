@@ -1,8 +1,7 @@
 import { ethers, Wallet } from "ethers"
 import { Dispatch, AnyAction } from "redux"
-import WalletEngine from "../../engine/WalletEngine"
 import { createWalletByMnemonic } from "../../utils"
-import { createHDWallet, createWalletByPrivateKey, deriveWallet } from "../../utils/wallet"
+import { createWalletByPrivateKey, deriveWallet } from "../../utils/wallet"
 import { 
     ADD_TOKEN, 
     ADD_CHILD_WALLET, 
@@ -72,28 +71,21 @@ export const addChildWallet = (wallet: HDWallet, coinType: number) => {
  */
 export const importWalletByPrivateKey = (privateKey: string, coinType: number) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        // const wallets: HDWallet[] = getState().wallet.wallets
-        // // 树结构，广度优先遍历是否已经存在
-        // const list = [ ...wallets ]
-        // while (list && list.length) {
-        //     const cur = list.shift()
-        //     if (!cur) return
-        //     if (cur.privateKey === privateKey) {
-        //         throw new Error("Wallet is exist")
-        //     }
-        //     if (cur.children && cur.children.length) {
-        //         for (let i = 0; i < cur.children.length; i++) {
-        //             const child = cur.children[i]
-        //             list.push(child)
-        //         }
-        //     }
-        // }
-        // const wallet = createWalletByPrivateKey(privateKey, coinType)
-        // // 直接用私钥导入的钱包，因为没有chaincode，无法派生子钱包，故不放入engine
-        // dispatch({
-        //     type: CREATE_WALLET,
-        //     payload: wallet
-        // })
+        const wallets: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.address && item.type === coinType)
+        let index = 1
+        if (wallets && wallets.length) {
+            const maxIndex = Math.max(...wallets.map((item: HDWallet) => item.index))
+            index = maxIndex + 1
+        }
+        const wallet: HDWallet = createWalletByPrivateKey(privateKey, coinType, index)
+        dispatch({
+            type: CREATE_WALLET,
+            payload: wallet
+        })
+        dispatch({
+            type: CHANGE_WALLET,
+            payload: wallet
+        })
     }
     
 }

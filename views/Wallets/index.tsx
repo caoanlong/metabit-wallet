@@ -1,124 +1,149 @@
-import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native"
+import { ParamListBase, useNavigation } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { HeaderBackButton, Header, Screen } from '@react-navigation/elements'
+import { getDefaultHeaderHeight } from '@react-navigation/elements'
 import React, { useState } from "react"
-import { Pressable, SafeAreaView, Text, View } from "react-native"
+import { Platform, Pressable, StatusBar, Text, useColorScheme, View } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
 import { Colors } from "react-native/Libraries/NewAppScreen"
 import { useSelector } from "react-redux"
-import Modal from "react-native-modal"
 import tailwind, { getColor } from "tailwind-rn"
 import { RootState } from "../../store"
+import { useSafeAreaFrame, useSafeAreaInsets } from "react-native-safe-area-context"
 
 const Stack = createNativeStackNavigator()
 
 function Wallets() {
-    const route = useRoute()
+    const isDarkMode = useColorScheme() === 'dark'
+    const frame = useSafeAreaFrame()
+    const insets = useSafeAreaInsets()
+    const defaultHeight = getDefaultHeaderHeight(frame, false, insets.top)
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const wallets = useSelector((state: RootState) => state.wallet.wallets)
-    const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false)
-    const [ showMnemonic, setShowMnemonic ] = useState<boolean>(false)
-    const [ isWalletInfoPopver, setIsWalletInfoPopver ] = useState<boolean>(false)
+    const hdWallets = useSelector((state: RootState) => state.wallet.wallets.filter((item: HDWallet) => !item.address))
+    const wallets = useSelector((state: RootState) => state.wallet.wallets.filter((item: HDWallet) => item.address))
     
     return (
-        <Screen 
-            focused={true}
-            navigation={navigation}
-            route={route}
-            header={(
-                <Header 
-                    headerLeftContainerStyle={tailwind(`pl-2`)}
-                    headerRightContainerStyle={tailwind(`pr-2`)}
-                    title={'钱包'} 
-                    headerLeft={() => (
-                        <HeaderBackButton 
-                            onPress={navigation.goBack} 
-                            labelVisible={true} 
-                        />
-                    )}
-                    headerRight={() => (
-                        <Pressable 
-                            onPress={() => {
-                                setShowCreateModal(true)
-
-                            }}
-                            style={tailwind(`w-10 h-10 flex justify-center items-end pl-3`)}>
-                            <Icon name="add" size={30} color={Colors.black} />
-                        </Pressable>
-                    )}
-                />
-            )}>
-            <>
-                <View>
-                    {
-                        wallets.map((wallet: HDWallet) => (
-                            <Pressable 
-                                onPress={() => {
-                                    const params: { parent: HDWallet } = { parent: wallet }
-                                    navigation.navigate('walletInfo', params)
-                                }}
-                                key={wallet.chainCode}>
-                                <View style={tailwind(`flex flex-row items-center p-4 bg-white mb-2`)}>
-                                    <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
-                                    <View style={tailwind(`flex-1 pl-4`)}>
-                                        <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
-                                    </View>
-                                    <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
-                                        <Icon 
-                                            name="chevron-forward" 
-                                            size={20}
-                                            color={getColor('blue-600')}
-                                        />
-                                    </View>
-                                </View>
-                            </Pressable>
-                        ))
-                    }
+        <>
+            <StatusBar 
+                barStyle={
+                    Platform.select({ ios: 'light-content', default: isDarkMode ? 'light-content' : 'dark-content' })
+                } 
+            />
+            <View style={tailwind(`bg-blue-600`)}>
+                <View 
+                    style={{
+                        ...tailwind(`flex flex-row`),
+                        height: defaultHeight,
+                        paddingTop: insets.top
+                    }}>
+                    <Pressable 
+                        onPress={() => navigation.goBack()}
+                        style={tailwind(`w-12 flex justify-center items-center`)}>
+                        <Icon name="chevron-back" size={24} color={Colors.white} />
+                    </Pressable>
+                    <View style={tailwind(`flex-1 flex justify-center`)}>
+                        <Text style={tailwind(`text-base text-center text-white`)}>钱包管理</Text>
+                    </View>
+                    <View style={tailwind(`w-12`)} />
                 </View>
-                <Modal 
-                    isVisible={showCreateModal}
-                    style={tailwind(`m-0 justify-end`)}
-                    onBackdropPress={() => setShowCreateModal(false)}
-                    onBackButtonPress={() => setShowCreateModal(false)}
-                    onSwipeComplete={() => setShowCreateModal(false)}
-                    swipeDirection={'down'}
-                    propagateSwipe>
-                    <SafeAreaView 
-                        style={{
-                            ...tailwind(`bg-white flex`),
-                            minHeight: 450
-                        }}>
-                        <View style={tailwind(`h-8 flex justify-center items-center`)}>
-                            <View 
-                                style={{
-                                    ...tailwind(`w-10 bg-gray-400 opacity-50`),
-                                    height: 5,
-                                    borderRadius: 4
-                                }} 
-                            />
-                        </View>
-                        <View style={tailwind(`flex items-center mt-8`)}>
-                            <Pressable 
-                                onPress={() => {
-                                    setShowCreateModal(false)
-                                    navigation.push('importWallet')
-                                }}
-                                style={tailwind(`w-56 py-3 border border-blue-600 rounded-full mb-6`)}>
-                                <Text style={tailwind(`text-blue-600 text-lg text-center`)}>使用助记词导入</Text>
-                            </Pressable>
-                            <Pressable 
-                                onPress={() => {
-                                    setShowCreateModal(false)
-                                    navigation.push('addWallet')
-                                }}
-                                style={tailwind(`w-56 py-3 bg-blue-600 rounded-full mb-16`)}>
-                                <Text style={tailwind(`text-white text-lg text-center`)}>创建新钱包</Text>
-                            </Pressable>
-                        </View>
-                    </SafeAreaView>
-                </Modal>
-            </>
-        </Screen>
+                <View style={tailwind(`flex items-center py-6`)}>
+                    <Pressable 
+                        onPress={() => {
+                            navigation.push('importWallet', {
+                                type: 'mnemonic'
+                            })
+                        }}
+                        style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
+                        <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用助记词导入HD钱包</Text>
+                    </Pressable>
+                    <Pressable 
+                        onPress={() => {
+                            navigation.push('importWallet', {
+                                type: 'privateKey'
+                            })
+                        }}
+                        style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
+                        <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用私钥导入币种钱包</Text>
+                    </Pressable>
+                    <Pressable 
+                        onPress={() => {
+                            navigation.push('addWallet')
+                        }}
+                        style={tailwind(`w-56 py-2 bg-white rounded-full`)}>
+                        <Text style={tailwind(`text-blue-600 text-sm text-center`)}>创建新钱包</Text>
+                    </Pressable>
+                </View>
+            </View>
+            <View style={tailwind(`px-3 py-2`)}>
+                <Text style={tailwind(`py-2 text-gray-500`)}>HD钱包列表</Text>
+                {
+                    hdWallets.map((wallet: HDWallet) => (
+                        <Pressable 
+                            style={{
+                                ...tailwind(`flex flex-row items-center p-4 bg-white mb-3 rounded-lg`),
+                                shadowColor: '#000000',
+                                shadowRadius: 2,
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 3
+                                },
+                                shadowOpacity: 0.03
+                            }}
+                            onPress={() => {
+                                const params: { parent: HDWallet } = { parent: wallet }
+                                navigation.navigate('walletInfo', params)
+                            }}
+                            key={wallet.chainCode}>
+                            <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
+                            <View style={tailwind(`flex-1 pl-4`)}>
+                                <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
+                            </View>
+                            <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
+                                <Icon 
+                                    name="chevron-forward" 
+                                    size={20}
+                                    color={getColor('blue-600')}
+                                />
+                            </View>
+                        </Pressable>
+                    ))
+                }
+            </View>
+            <View style={tailwind(`px-3 py-2`)}>
+                <Text style={tailwind(`py-2 text-gray-500`)}>币种钱包列表</Text>
+                {
+                    wallets.map((wallet: HDWallet) => (
+                        <Pressable 
+                            style={{
+                                ...tailwind(`flex flex-row items-center p-4 bg-white mb-3 rounded-lg`),
+                                shadowColor: '#000000',
+                                shadowRadius: 2,
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 3
+                                },
+                                shadowOpacity: 0.03
+                            }}
+                            onPress={() => {
+                                const params: { parent: HDWallet } = { parent: wallet }
+                                navigation.navigate('walletInfo', params)
+                            }}
+                            key={wallet.chainCode}>
+                            <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
+                            <View style={tailwind(`flex-1 pl-4`)}>
+                                <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
+                            </View>
+                            <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
+                                <Icon 
+                                    name="chevron-forward" 
+                                    size={20}
+                                    color={getColor('blue-600')}
+                                />
+                            </View>
+                        </Pressable>
+                    ))
+                }
+            </View>
+        </>
     )
 }
 

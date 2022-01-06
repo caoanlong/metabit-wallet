@@ -20,7 +20,7 @@ function Entry() {
             </View>
             <View style={tailwind(`flex items-center`)}>
                 <Pressable 
-                    onPress={() => navigation.push('importWallet')}
+                    onPress={() => navigation.push('importWallet', { type: 'mnemonic' })}
                     style={tailwind(`w-56 py-3 border border-blue-600 rounded-full mb-6`)}>
                     <Text style={tailwind(`text-blue-600 text-lg text-center`)}>使用助记词导入</Text>
                 </Pressable>
