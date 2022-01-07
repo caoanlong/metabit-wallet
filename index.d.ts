@@ -14,6 +14,7 @@ interface Mnemonic {
 
 interface HDWallet {
     name: string,
+    alias?: string,
     privateKey: string, 
     publicKey: string,
     compressPublicKey: string,

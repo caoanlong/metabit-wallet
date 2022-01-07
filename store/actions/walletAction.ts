@@ -80,7 +80,7 @@ export const addChildWallet = (wallet: HDWallet, chain: string) => {
 export const importWalletByPrivateKey = (privateKey: string, chain: string) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
         const wallets: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.address && item.chain === chain)
-        let index = 1
+        let index = 0
         if (wallets && wallets.length) {
             const maxIndex = Math.max(...wallets.map((item: HDWallet) => item.index))
             index = maxIndex + 1

@@ -18,6 +18,7 @@ import tailwind from 'tailwind-rn'
 import { ScreenStackHeaderConfig } from 'react-native-screens'
 import WalletInfo from './views/Wallets/WalletInfo'
 import DeriveWallet from './views/DeriveWallet'
+import HDWalletInfo from './views/Wallets/HDWalletInfo'
 
 
 const Stack = createNativeStackNavigator()
@@ -148,6 +149,13 @@ const App = () => {
 					<Stack.Screen 
 						name="wallets" 
 						component={Wallets}
+						options={{ 
+							headerShown: false
+						}}
+					/>
+					<Stack.Screen 
+						name="hdWalletInfo" 
+						component={HDWalletInfo}
 						options={{ 
 							headerShown: false
 						}}

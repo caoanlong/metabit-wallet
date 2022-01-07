@@ -161,7 +161,7 @@ interface CreateHDWalletProps {
  * @param mnemonic  助记词
  * @returns 
  */
- export function createHDWallet({ mnemonic, index = 1 }: CreateHDWalletProps): HDWallet {
+ export function createHDWallet({ mnemonic, index = 0 }: CreateHDWalletProps): HDWallet {
     if (mnemonic && !isValidMnemonic(mnemonic)) throw new Error("助记词无效")
     if (!mnemonic) {
         mnemonic = generateMnemonic()
@@ -289,7 +289,7 @@ function derive(this: HDWallet, index: number, chain: string): HDWallet {
  * @param coinType 
  * @returns 
  */
-export function createWalletByPrivateKey(privateKey: string, chain: string, index: number = 1): HDWallet {
+export function createWalletByPrivateKey(privateKey: string, chain: string, index: number = 0): HDWallet {
     const coinType = CHAIN_COINTYPE[chain]
     const privKey: Buffer = hexStrToBuf(privateKey)
     const { publicKey, compressPublicKey } = getPubkeyFromPrikey(privKey)

@@ -25,7 +25,7 @@ export const hexStrToBuf = (str: string): Buffer => {
 }
 
 export function createWalletByMnemonic(mnemonic?: string): HDWallet {
-    let index = 1
+    let index = 0
     const wallets: HDWallet[] = store.getState().wallet.wallets
     const roots = wallets.filter((item: HDWallet) => item.type === -1)
     if (roots.length) {

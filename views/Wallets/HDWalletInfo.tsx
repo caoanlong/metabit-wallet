@@ -1,4 +1,4 @@
-import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native"
+import { ParamListBase, useIsFocused, useNavigation, useRoute } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { getDefaultHeaderHeight } from '@react-navigation/elements'
 import React, { useEffect, useState } from "react"
@@ -7,6 +7,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { BlurView } from "@react-native-community/blur"
 import Icon from "react-native-vector-icons/Ionicons"
 import tailwind, { getColor } from "tailwind-rn"
+import { Colors } from "react-native/Libraries/NewAppScreen"
 import { useDispatch, useSelector } from "react-redux"
 import { delRootWallet } from "../../store/actions/walletAction"
 import { useSafeAreaFrame, useSafeAreaInsets } from "react-native-safe-area-context"
@@ -14,21 +15,28 @@ import { RootState } from "../../store"
 import HeaderBar from "../../components/HeaderBar"
 import WalletItem from "./WalletItem"
 
-function WalletInfo() {
+function HDWalletInfo() {
     const frame = useSafeAreaFrame()
     const insets = useSafeAreaInsets()
     const defaultHeight = getDefaultHeaderHeight(frame, false, insets.top)
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
+    const isFocused = useIsFocused()
     const dispatch = useDispatch()
     const route = useRoute()
     const { wallet } = route.params as { wallet: HDWallet }
-    
-    const [ showPrivateKey, setShowPrivateKey ] = useState<boolean>(false)
+    const wallets = useSelector((state: RootState) => state.wallet.wallets)
+    const [ hdWallet, setHdWallet ] = useState(wallet)
+    const [ showMnemonic, setShowMnemonic ] = useState<boolean>(false)
 
+    useEffect(() => {
+        const w = wallets.find((item: HDWallet) => item.chainCode === wallet.chainCode) as HDWallet
+        setHdWallet(w)
+    }, [isFocused])
+    
     return (
         <View style={tailwind(`absolute top-0 left-0 right-0 bottom-0`)}>
             <HeaderBar 
-                title={'币种钱包详情'} 
+                title={wallet.address ? '币种钱包详情' : 'HD钱包详情'} 
                 backgroundColor={getColor('blue-600')} 
                 color={'#ffffff'} 
                 right={
@@ -41,14 +49,14 @@ function WalletInfo() {
                                 {
                                     text: "确定",
                                     onPress: () => {
-                                        // dispatch(delRootWallet(wallet.publicKey))
-                                        // navigation.goBack()
+                                        dispatch(delRootWallet(wallet.publicKey))
+                                        navigation.goBack()
                                     },
                                 }
                             ])
                         }}
                         style={tailwind(`w-full h-full flex items-center justify-center`)}>
-                        <Icon name="trash-outline" size={20} color={'#ffffff'} />
+                        <Icon name="trash-outline" size={20} color={Colors.white} />
                     </Pressable>
                 }
             />
@@ -59,9 +67,19 @@ function WalletInfo() {
                     ...tailwind(`relative h-full z-10`), 
                     paddingTop: defaultHeight
                 }}>
-                {/* <View style={tailwind(`flex items-center py-10 bg-blue-600`)}>
-                    
-                </View> */}
+                <View style={tailwind(`flex items-center py-10 bg-blue-600`)}>
+                    {
+                        hdWallet.address ? <></> : 
+                        <Pressable 
+                            onPress={() => {
+                                const params: { parent: HDWallet } = { parent: hdWallet }
+                                navigation.push('deriveWallet', params)
+                            }}
+                            style={tailwind(`w-56 py-2 bg-white rounded-full`)}>
+                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>派生币种钱包</Text>
+                        </Pressable>
+                    }
+                </View>
                 <View style={tailwind(`bg-gray-100`)}>
                     <View 
                         style={{
@@ -71,29 +89,7 @@ function WalletInfo() {
                         }}>
                         <Text style={tailwind(`text-base mr-3`)}>名称</Text>
                         <Text style={tailwind(`flex-1 text-base text-right`)}>
-                            { wallet.alias ?? (wallet.name + ' ' + (wallet.index + 1)) }
-                        </Text>
-                    </View>
-                    <View 
-                        style={{
-                            ...tailwind(`flex flex-row bg-white px-3 py-5`),
-                            borderColor: '#ddd',
-                            borderBottomWidth: 0.5
-                        }}>
-                        <Text style={tailwind(`text-base mr-3`)}>区块链网络</Text>
-                        <Text style={tailwind(`flex-1 text-base text-right`)}>
-                            { wallet.chain }
-                        </Text>
-                    </View>
-                    <View 
-                        style={{
-                            ...tailwind(`flex flex-row bg-white px-3 py-5`),
-                            borderColor: '#ddd',
-                            borderBottomWidth: 0.5
-                        }}>
-                        <Text style={tailwind(`text-base mr-3`)}>地址</Text>
-                        <Text style={tailwind(`flex-1 text-base text-right`)}>
-                            { wallet.address }
+                            { hdWallet.alias ?? (hdWallet.name + ' ' + (hdWallet.index + 1)) }
                         </Text>
                     </View>
                     <View
@@ -103,15 +99,15 @@ function WalletInfo() {
                             borderBottomWidth: 0.5
                         }}>
                         {
-                            showPrivateKey ? <></> :
+                            showMnemonic ? <></> :
                             <>
                                 <View style={tailwind(`absolute z-20 top-0 left-0 right-0 bottom-0 flex flex-row justify-center items-center`)}>
                                     <Pressable 
                                         onPress={() => {
-                                            setShowPrivateKey(true)
+                                            setShowMnemonic(true)
                                         }}
                                         style={tailwind(`w-32 h-10 bg-blue-600 rounded-full flex items-center justify-center`)}>
-                                        <Text style={tailwind(`text-white text-sm text-center`)}>查看私钥</Text>
+                                        <Text style={tailwind(`text-white text-sm text-center`)}>查看助记词</Text>
                                     </Pressable>
                                 </View>
                                 <BlurView
@@ -123,17 +119,30 @@ function WalletInfo() {
                             </>
                         }
                         <Text style={tailwind(`text-base`)}>
-                            {wallet.privateKey}
+                            {hdWallet.mnemonic?.phrase}
                         </Text>
                         <Pressable 
-                            onPress={() => Clipboard.setString(wallet.privateKey)}>
+                            onPress={() => Clipboard.setString(wallet.mnemonic?.phrase ?? '')}>
                             <Text style={tailwind(`text-yellow-500 text-base text-center`)}>点击复制</Text>
                         </Pressable>
                     </View>
+                    {
+                        <View style={tailwind(`px-3 py-2`)}>
+                            <Text style={tailwind(`py-4 text-sm text-gray-600`)}>币种钱包</Text>
+                            {
+                                wallet.children?.map((item: HDWallet) => (
+                                    <WalletItem 
+                                        key={item.address + item.chain + item.index} 
+                                        wallet={item} 
+                                    />
+                                ))
+                            }
+                        </View>
+                    }
                 </View>
             </ScrollView>
         </View>
     )
 }
 
-export default WalletInfo
+export default HDWalletInfo
