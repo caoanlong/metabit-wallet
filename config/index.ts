@@ -68,4 +68,16 @@ export const networkList: { [key: string]: Network} = {
 		color: 'f2f3f4',
 		networkType: 'rpc',
 	},
-};
+}
+
+export const CHAINS = [
+	'Ethereum',
+	'Tron',
+]
+
+export const CHAIN_COINTYPE: {[key: string]: number} = {
+	'Ethereum': 60,
+	'Polygon': 60,
+	'BSC': 60,
+	'Tron': 195
+}

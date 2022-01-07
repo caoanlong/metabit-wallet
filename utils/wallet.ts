@@ -6,6 +6,7 @@ import { Buffer } from 'buffer'
 import { generateMnemonic, mnemonicToSeedSync } from '../utils/bip39'
 import { isValidMnemonic, keccak256, sha256, ripemd160 } from "ethers/lib/utils"
 import { hexStrToBuf } from "."
+import { CHAIN_COINTYPE } from '../config'
 
 const secp256k1 = new ec('secp256k1')
 const n = secp256k1.curve.n
@@ -17,12 +18,6 @@ const THROW_BAD_PRIVATE = 'Expected Private'
 const THROW_BAD_TWEAK = 'Expected Tweak'
 
 const HIGHEST_BIT = 0x80000000
-
-export const COIN_NAME_TYPE: {[key: number]: string} ={
-    0: 'Bitcoin',
-    60: 'Ethereum',
-    195: 'Tron'
-}
 
 function fromBuffer(d: Buffer) { 
     return new BN(d) 
@@ -200,7 +195,7 @@ interface CreateHDWalletProps {
     }
 }
 
-function derive(this: HDWallet, index: number, coinType: number): HDWallet {
+function derive(this: HDWallet, index: number, chain: string): HDWallet {
     const data = Buffer.allocUnsafe(37)
     const priKey: Buffer = hexStrToBuf(this.privateKey)
     const pubKey: Buffer = hexStrToBuf(this.compressPublicKey)
@@ -228,15 +223,15 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
     if (this.privateKey) {
         ki = privateAdd(priKey, IL) as Buffer
         // In case privateKey == 0, proceed with the next value for i
-        if (!ki) return derive.call(this, index + 1, coinType)
+        if (!ki) return derive.call(this, index + 1, chain)
     } else {
         // ki = pointAddScalar(this.publicKey, IL, true)
         // TODO 这里应该是用 pointAddScalar，而不是 privateAdd
         Ki = privateAdd(priKey, IL) as Buffer
-        if (!Ki) return derive.call(this, index + 1, coinType)
+        if (!Ki) return derive.call(this, index + 1, chain)
     }
 
-
+    const coinType: number = CHAIN_COINTYPE[chain]
     const { publicKey, compressPublicKey } = getPubkeyFromPrikey(ki)
     const address = getAddress(ki, coinType)
     return {
@@ -245,10 +240,11 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
         compressPublicKey: '0x' + compressPublicKey.toString('hex'),
         chainCode: '0x' + IR.toString('hex'),
         path: getPath(coinType, index),
-        name: COIN_NAME_TYPE[coinType] + ' Wallet',
+        name: chain + ' Wallet',
         address,
         type: coinType,
-        index: index + 1,
+        chain,
+        index,
         children: []
     }
 }
@@ -261,7 +257,8 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
  * @param index 
  * @returns 
  */
- export function deriveWallet(parent: HDWallet, coinType: number = 0, index: number = 0): HDWallet {
+ export function deriveWallet(parent: HDWallet, chain: string = 'Ethereum', index: number = 0): HDWallet {
+    const coinType: number = CHAIN_COINTYPE[chain]
     const derivePath = getPath(coinType, index)
     let splitPath = derivePath.split('/')
     if (splitPath[0] === 'm') {
@@ -273,11 +270,11 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
         if (component.match(/^[0-9]+'$/)) {
             const idx = parseInt(component.substring(0, component.length - 1))
             if (idx >= HIGHEST_BIT) { throw new Error("invalid path index - " + component) }
-            result = derive.call(result, HIGHEST_BIT + idx, coinType)
+            result = derive.call(result, HIGHEST_BIT + idx, chain)
         } else if (component.match(/^[0-9]+$/)) {
             const idx = parseInt(component)
             if (idx >= HIGHEST_BIT) { throw new Error("invalid path index - " + component) }
-            result = derive.call(result, idx, coinType)
+            result = derive.call(result, idx, chain)
         } else {
             throw new Error("invalid path component - " + component)
         }
@@ -292,7 +289,8 @@ function derive(this: HDWallet, index: number, coinType: number): HDWallet {
  * @param coinType 
  * @returns 
  */
-export function createWalletByPrivateKey(privateKey: string, coinType: number, index: number = 1): HDWallet {
+export function createWalletByPrivateKey(privateKey: string, chain: string, index: number = 1): HDWallet {
+    const coinType = CHAIN_COINTYPE[chain]
     const privKey: Buffer = hexStrToBuf(privateKey)
     const { publicKey, compressPublicKey } = getPubkeyFromPrikey(privKey)
     const address = getAddress(privKey, coinType)
@@ -302,8 +300,9 @@ export function createWalletByPrivateKey(privateKey: string, coinType: number, i
         compressPublicKey: '0x' + compressPublicKey.toString('hex'),
         chainCode: '',
         address,
-        name: COIN_NAME_TYPE[coinType] + ' Wallet',
+        name: chain + ' Wallet',
         type: coinType,
+        chain,
         index
     }
 }

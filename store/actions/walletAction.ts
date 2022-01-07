@@ -49,35 +49,43 @@ export const delRootWallet = (publicKey: string) => {
  * @param coinType 
  * @returns 
  */
-export const addChildWallet = (wallet: HDWallet, coinType: number) => {
+export const addChildWallet = (wallet: HDWallet, chain: string) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        // const parent = engine.getWallet(wallet.privateKey)
-        // if (!parent) throw new Error("Parent not found")
-        // const child = deriveWallet(parent, coinType)
-        // engine.addWallet([ child.wallet ])
-        // wallet.children?.push(child.walletJson)
-        // dispatch({
-        //     type: ADD_CHILD_WALLET,
-        //     payload: wallet
-        // })
+        const children = wallet.children
+        let index = 0
+        if (children) {
+            if (children.length) {
+                const indexes = children.filter((item: HDWallet) => item.chain === chain).map((item: HDWallet) => item.index)
+                const maxIndex = Math.max(...indexes)
+                index = maxIndex + 1
+            }
+        } else {
+            wallet.children = []
+        }
+        const child = deriveWallet(wallet, chain, index)
+        wallet.children?.push(child)
+        dispatch({
+            type: ADD_CHILD_WALLET,
+            payload: wallet
+        })
     }
 }
 
 /**
  * 根据私钥导入特定币种钱包
  * @param privateKey 
- * @param coinType 
+ * @param chain 
  * @returns 
  */
-export const importWalletByPrivateKey = (privateKey: string, coinType: number) => {
+export const importWalletByPrivateKey = (privateKey: string, chain: string) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        const wallets: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.address && item.type === coinType)
+        const wallets: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.address && item.chain === chain)
         let index = 1
         if (wallets && wallets.length) {
             const maxIndex = Math.max(...wallets.map((item: HDWallet) => item.index))
             index = maxIndex + 1
         }
-        const wallet: HDWallet = createWalletByPrivateKey(privateKey, coinType, index)
+        const wallet: HDWallet = createWalletByPrivateKey(privateKey, chain, index)
         dispatch({
             type: CREATE_WALLET,
             payload: wallet

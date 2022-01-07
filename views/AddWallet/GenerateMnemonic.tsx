@@ -1,7 +1,7 @@
 import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import React, { useEffect, useState } from "react"
-import { Pressable, Text, View } from "react-native"
+import { ActivityIndicator, Pressable, Text, View } from "react-native"
 import tailwind, { getColor } from "tailwind-rn"
 import Icon from "react-native-vector-icons/Ionicons"
 import { createWalletByMnemonic } from "../../utils"
@@ -9,12 +9,16 @@ import { createWalletByMnemonic } from "../../utils"
 function GenerateMnemonic() {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const [ mnemonic, setMnemonic ] = useState<string[]>([])
+    const [ loading, setLoading ] = useState<boolean>(true)
 
     useEffect(() => {
-        const root = createWalletByMnemonic()
-        if (root && root.mnemonic && root.mnemonic.phrase) {
-            setMnemonic(root.mnemonic.phrase.split(' '))
-        }
+        setTimeout(() => {
+            const root = createWalletByMnemonic()
+            if (root && root.mnemonic && root.mnemonic.phrase) {
+                setMnemonic(root.mnemonic.phrase.split(' '))
+                setLoading(false)
+            }
+        }, 200)
     }, [])
 
     return (
@@ -41,6 +45,10 @@ function GenerateMnemonic() {
                         borderWidth: 0.5, 
                     }}>
                     {
+                        loading ? 
+                        <View style={tailwind(`w-full h-64 flex items-center justify-center`)}>
+                            <ActivityIndicator />
+                        </View> : 
                         mnemonic.map((item: string, i: number) => (
                             <View 
                                 key={i}
@@ -62,11 +70,13 @@ function GenerateMnemonic() {
                         ))
                     }
                 </View>
+                
                 <Pressable 
+                    disabled={loading}
                     onPress={() => {
                         navigation.push('confirmMnemonic', { mnemonic })
                     }}
-                    style={tailwind(`py-3 rounded-full bg-blue-600`)}>
+                    style={tailwind(`py-3 rounded-full ${loading ? 'bg-blue-200' : 'bg-blue-600'}`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>下一步</Text>
                 </Pressable>
             </View>

@@ -17,6 +17,7 @@ import Wallets from './views/Wallets'
 import tailwind from 'tailwind-rn'
 import { ScreenStackHeaderConfig } from 'react-native-screens'
 import WalletInfo from './views/Wallets/WalletInfo'
+import DeriveWallet from './views/DeriveWallet'
 
 
 const Stack = createNativeStackNavigator()
@@ -169,6 +170,14 @@ const App = () => {
 					<Stack.Screen 
 						name="importWallet" 
 						component={ImportWallet} 
+						options={{ 
+							presentation: 'modal',
+							headerShown: false
+						}} 
+					/>
+					<Stack.Screen 
+						name="deriveWallet" 
+						component={DeriveWallet} 
 						options={{ 
 							presentation: 'modal',
 							headerShown: false

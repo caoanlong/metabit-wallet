@@ -23,6 +23,7 @@ interface HDWallet {
     path?: string,
     type: number,
     index: number,
+    chain?: string,
     children?: HDWallet[]
 }
 

@@ -25,6 +25,11 @@ function Entry() {
                     <Text style={tailwind(`text-blue-600 text-lg text-center`)}>使用助记词导入</Text>
                 </Pressable>
                 <Pressable 
+                    onPress={() => navigation.push('importWallet', { type: 'privateKey' })}
+                    style={tailwind(`w-56 py-3 border border-blue-600 rounded-full mb-6`)}>
+                    <Text style={tailwind(`text-blue-600 text-lg text-center`)}>使用私钥导入</Text>
+                </Pressable>
+                <Pressable 
                     onPress={() => navigation.push('addWallet')}
                     style={tailwind(`w-56 py-3 bg-blue-600 rounded-full mb-16`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>创建新钱包</Text>

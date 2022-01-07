@@ -73,76 +73,84 @@ function Wallets() {
                     </Pressable>
                 </View>
             </View>
-            <View style={tailwind(`px-3 py-2`)}>
-                <Text style={tailwind(`py-2 text-gray-500`)}>HD钱包列表</Text>
-                {
-                    hdWallets.map((wallet: HDWallet) => (
-                        <Pressable 
-                            style={{
-                                ...tailwind(`flex flex-row items-center p-4 bg-white mb-3 rounded-lg`),
-                                shadowColor: '#000000',
-                                shadowRadius: 2,
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 3
-                                },
-                                shadowOpacity: 0.03
-                            }}
-                            onPress={() => {
-                                const params: { parent: HDWallet } = { parent: wallet }
-                                navigation.navigate('walletInfo', params)
-                            }}
-                            key={wallet.chainCode}>
-                            <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
-                            <View style={tailwind(`flex-1 pl-4`)}>
-                                <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
-                            </View>
-                            <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
-                                <Icon 
-                                    name="chevron-forward" 
-                                    size={20}
-                                    color={getColor('blue-600')}
-                                />
-                            </View>
-                        </Pressable>
-                    ))
-                }
-            </View>
-            <View style={tailwind(`px-3 py-2`)}>
-                <Text style={tailwind(`py-2 text-gray-500`)}>币种钱包列表</Text>
-                {
-                    wallets.map((wallet: HDWallet) => (
-                        <Pressable 
-                            style={{
-                                ...tailwind(`flex flex-row items-center p-4 bg-white mb-3 rounded-lg`),
-                                shadowColor: '#000000',
-                                shadowRadius: 2,
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 3
-                                },
-                                shadowOpacity: 0.03
-                            }}
-                            onPress={() => {
-                                const params: { parent: HDWallet } = { parent: wallet }
-                                navigation.navigate('walletInfo', params)
-                            }}
-                            key={wallet.chainCode}>
-                            <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
-                            <View style={tailwind(`flex-1 pl-4`)}>
-                                <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
-                            </View>
-                            <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
-                                <Icon 
-                                    name="chevron-forward" 
-                                    size={20}
-                                    color={getColor('blue-600')}
-                                />
-                            </View>
-                        </Pressable>
-                    ))
-                }
-            </View>
+            {
+                hdWallets && hdWallets.length ? 
+                <View style={tailwind(`px-3 py-2`)}>
+                    <Text style={tailwind(`py-2 text-gray-500`)}>HD钱包列表</Text>
+                    {
+                        hdWallets.map((wallet: HDWallet) => (
+                            <Pressable 
+                                style={{
+                                    ...tailwind(`flex flex-row items-center p-4 bg-white mb-3 rounded-lg`),
+                                    shadowColor: '#000000',
+                                    shadowRadius: 2,
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 3
+                                    },
+                                    shadowOpacity: 0.03
+                                }}
+                                onPress={() => {
+                                    const params: { parent: HDWallet } = { parent: wallet }
+                                    navigation.navigate('walletInfo', params)
+                                }}
+                                key={wallet.chainCode}>
+                                <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
+                                <View style={tailwind(`flex-1 pl-4`)}>
+                                    <Text style={tailwind(`text-black text-lg`)}>{wallet.name + ' ' + wallet.index}</Text>
+                                </View>
+                                <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
+                                    <Icon 
+                                        name="chevron-forward" 
+                                        size={20}
+                                        color={getColor('blue-600')}
+                                    />
+                                </View>
+                            </Pressable>
+                        ))
+                    }
+                </View> : <></>
+            }
+            {
+                wallets && wallets.length ? 
+                <View style={tailwind(`px-3 py-2`)}>
+                    <Text style={tailwind(`py-2 text-gray-500`)}>币种钱包列表</Text>
+                    {
+                        wallets.map((wallet: HDWallet) => (
+                            <Pressable 
+                                style={{
+                                    ...tailwind(`flex flex-row items-center p-4 bg-white mb-3 rounded-lg`),
+                                    shadowColor: '#000000',
+                                    shadowRadius: 2,
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 3
+                                    },
+                                    shadowOpacity: 0.03
+                                }}
+                                onPress={() => {
+                                    const params: { parent: HDWallet } = { parent: wallet }
+                                    navigation.navigate('walletInfo', params)
+                                }}
+                                key={wallet.address}>
+                                <View style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)}></View>
+                                <View style={tailwind(`flex-1 pl-4`)}>
+                                    <Text style={tailwind(`text-black text-lg`)}>
+                                        {wallet.name + ' ' + (wallet.index + 1)}
+                                    </Text>
+                                </View>
+                                <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
+                                    <Icon 
+                                        name="chevron-forward" 
+                                        size={20}
+                                        color={getColor('blue-600')}
+                                    />
+                                </View>
+                            </Pressable>
+                        ))
+                    }
+                </View> : <></>
+            }
         </>
     )
 }
