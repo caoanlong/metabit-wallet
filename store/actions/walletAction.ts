@@ -8,7 +8,7 @@ import {
     CHANGE_WALLET, 
     CREATE_WALLET, 
     DEL_TOKEN,
-    DEL_ROOT_WALLET
+    DEL_WALLET
 } from "../constants"
 
 // const engine = WalletEngine.getInstance()
@@ -17,7 +17,6 @@ import {
  * @param mnemonic 
  * @returns 
  */
-// e7282b6964b2792925cb486550a0eec1a28e908d638b3e8e48be0146703cc960
 export const createWallet = (mnemonic?: string) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
         const root = createWalletByMnemonic(mnemonic)
@@ -32,12 +31,22 @@ export const createWallet = (mnemonic?: string) => {
     }
 }
 
-export const delRootWallet = (publicKey: string) => {
+export const delWallet = (wallet: HDWallet) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
         const wallets: HDWallet[] = getState().wallet.wallets
-        const list = wallets.filter((item: HDWallet) => item.publicKey !== publicKey)
+        let list: HDWallet[] = []
+        if (wallet.type === -1 || !wallet.parentKey) {
+            list = wallets.filter((item: HDWallet) => item.chainCode !== wallet.chainCode)
+        } else {
+            list = [...wallets]
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].children && list[i].children?.length) {
+                    list[i].children = list[i].children?.filter((item: HDWallet) => !(item.address === wallet.address && item.chain === wallet.chain))
+                }
+            }
+        }
         dispatch({
-            type: DEL_ROOT_WALLET,
+            type: DEL_WALLET,
             payload: list
         })
     }
@@ -56,14 +65,17 @@ export const addChildWallet = (wallet: HDWallet, chain: string) => {
         if (children) {
             if (children.length) {
                 const indexes = children.filter((item: HDWallet) => item.chain === chain).map((item: HDWallet) => item.index)
-                const maxIndex = Math.max(...indexes)
-                index = maxIndex + 1
+                if (indexes && indexes.length) {
+                    const maxIndex = Math.max(...indexes)
+                    index = maxIndex + 1
+                }
             }
         } else {
             wallet.children = []
         }
         const child = deriveWallet(wallet, chain, index)
         wallet.children?.push(child)
+        
         dispatch({
             type: ADD_CHILD_WALLET,
             payload: wallet

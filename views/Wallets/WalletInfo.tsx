@@ -1,18 +1,18 @@
 import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { getDefaultHeaderHeight } from '@react-navigation/elements'
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Alert, Pressable, ScrollView, Text, View } from "react-native"
 import Clipboard from '@react-native-clipboard/clipboard'
 import { BlurView } from "@react-native-community/blur"
 import Icon from "react-native-vector-icons/Ionicons"
 import tailwind, { getColor } from "tailwind-rn"
 import { useDispatch, useSelector } from "react-redux"
-import { delRootWallet } from "../../store/actions/walletAction"
+import QRCode from 'react-native-qrcode-svg'
+import { delWallet } from "../../store/actions/walletAction"
 import { useSafeAreaFrame, useSafeAreaInsets } from "react-native-safe-area-context"
-import { RootState } from "../../store"
 import HeaderBar from "../../components/HeaderBar"
-import WalletItem from "./WalletItem"
+import { RootState } from "../../store"
 
 function WalletInfo() {
     const frame = useSafeAreaFrame()
@@ -22,6 +22,7 @@ function WalletInfo() {
     const dispatch = useDispatch()
     const route = useRoute()
     const { wallet } = route.params as { wallet: HDWallet }
+    const wallets: HDWallet[] = useSelector((state: RootState) => state.wallet.wallets)
     
     const [ showPrivateKey, setShowPrivateKey ] = useState<boolean>(false)
 
@@ -32,6 +33,7 @@ function WalletInfo() {
                 backgroundColor={getColor('blue-600')} 
                 color={'#ffffff'} 
                 right={
+                    !wallet.parentKey && wallets.length === 1 ? <></> :
                     <Pressable 
                         onPress={() => {
                             Alert.alert('提示', '确定删除钱包？', [
@@ -41,8 +43,8 @@ function WalletInfo() {
                                 {
                                     text: "确定",
                                     onPress: () => {
-                                        // dispatch(delRootWallet(wallet.publicKey))
-                                        // navigation.goBack()
+                                        dispatch(delWallet(wallet))
+                                        navigation.goBack()
                                     },
                                 }
                             ])
@@ -59,9 +61,11 @@ function WalletInfo() {
                     ...tailwind(`relative h-full z-10`), 
                     paddingTop: defaultHeight
                 }}>
-                {/* <View style={tailwind(`flex items-center py-10 bg-blue-600`)}>
-                    
-                </View> */}
+                <View style={tailwind(`flex items-center py-6 bg-blue-600`)}>
+                    <View style={tailwind(`p-3 bg-white`)}>
+                        <QRCode size={160} value={wallet.address} />
+                    </View>
+                </View>
                 <View style={tailwind(`bg-gray-100`)}>
                     <View 
                         style={{
@@ -98,7 +102,7 @@ function WalletInfo() {
                     </View>
                     <View
                         style={{
-                            ...tailwind(`relative bg-white py-3 px-2`),
+                            ...tailwind(`relative bg-white py-3 px-3`),
                             borderColor: '#ddd',
                             borderBottomWidth: 0.5
                         }}>
@@ -122,12 +126,13 @@ function WalletInfo() {
                                 />
                             </>
                         }
-                        <Text style={tailwind(`text-base`)}>
-                            {wallet.privateKey}
-                        </Text>
                         <Pressable 
-                            onPress={() => Clipboard.setString(wallet.privateKey)}>
-                            <Text style={tailwind(`text-yellow-500 text-base text-center`)}>点击复制</Text>
+                            onPress={() => {
+                                Clipboard.setString(wallet.privateKey)
+                            }}>
+                            <Text style={tailwind(`text-base`)}>
+                                {wallet.privateKey}
+                            </Text>
                         </Pressable>
                     </View>
                 </View>

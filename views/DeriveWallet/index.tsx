@@ -40,9 +40,8 @@ function DeriveWallet() {
                                     key={item}
                                     onPress={() => setChain(item)}
                                     style={{ 
-                                        ...tailwind(`${chain === item ? 'bg-green-500' : 'border-gray-400'} flex items-center py-1 rounded-md`),
+                                        ...tailwind(`${chain === item ? 'bg-green-500' : 'bg-gray-100'} flex items-center py-1 rounded-md`),
                                         width: '30%',
-                                        borderWidth: chain === item ? 0 : 0.5,
                                         marginLeft: (i-1) % 3 ? 0 : '5%',
                                         marginRight: (i-1) % 3 ? 0 : '5%'
                                     }}>

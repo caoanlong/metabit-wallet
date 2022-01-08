@@ -35,7 +35,7 @@ export function createWalletByMnemonic(mnemonic?: string): HDWallet {
     
     const root: HDWallet = createHDWallet({ mnemonic, index })
     // 默认创建以太坊钱包和波场
-    // const btc = deriveWallet(root, 0)
+    // const btc = deriveWallet(root, 'Bitcoin')
     const eth = deriveWallet(root, 'Ethereum')
     const trx = deriveWallet(root, 'Tron')
     // engine.addWallet([ root.wallet, btc.wallet, eth.wallet, trx.wallet ])

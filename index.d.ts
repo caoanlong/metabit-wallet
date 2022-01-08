@@ -25,7 +25,8 @@ interface HDWallet {
     type: number,
     index: number,
     chain?: string,
-    children?: HDWallet[]
+    children?: HDWallet[],
+    parentKey?: string
 }
 
 type Token = {

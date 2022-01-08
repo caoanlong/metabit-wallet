@@ -9,7 +9,7 @@ import Icon from "react-native-vector-icons/Ionicons"
 import tailwind, { getColor } from "tailwind-rn"
 import { Colors } from "react-native/Libraries/NewAppScreen"
 import { useDispatch, useSelector } from "react-redux"
-import { delRootWallet } from "../../store/actions/walletAction"
+import { delWallet } from "../../store/actions/walletAction"
 import { useSafeAreaFrame, useSafeAreaInsets } from "react-native-safe-area-context"
 import { RootState } from "../../store"
 import HeaderBar from "../../components/HeaderBar"
@@ -24,11 +24,12 @@ function HDWalletInfo() {
     const dispatch = useDispatch()
     const route = useRoute()
     const { wallet } = route.params as { wallet: HDWallet }
-    const wallets = useSelector((state: RootState) => state.wallet.wallets)
+    const wallets: HDWallet[] = useSelector((state: RootState) => state.wallet.wallets)
     const [ hdWallet, setHdWallet ] = useState(wallet)
     const [ showMnemonic, setShowMnemonic ] = useState<boolean>(false)
 
     useEffect(() => {
+        if (!isFocused) return
         const w = wallets.find((item: HDWallet) => item.chainCode === wallet.chainCode) as HDWallet
         setHdWallet(w)
     }, [isFocused])
@@ -40,6 +41,7 @@ function HDWalletInfo() {
                 backgroundColor={getColor('blue-600')} 
                 color={'#ffffff'} 
                 right={
+                    wallets.length === 1 ? <></> : 
                     <Pressable 
                         onPress={() => {
                             Alert.alert('提示', '确定删除钱包？', [
@@ -49,7 +51,7 @@ function HDWalletInfo() {
                                 {
                                     text: "确定",
                                     onPress: () => {
-                                        dispatch(delRootWallet(wallet.publicKey))
+                                        dispatch(delWallet(wallet))
                                         navigation.goBack()
                                     },
                                 }
@@ -94,7 +96,7 @@ function HDWalletInfo() {
                     </View>
                     <View
                         style={{
-                            ...tailwind(`relative bg-white py-3 px-2`),
+                            ...tailwind(`relative bg-white py-3 px-3`),
                             borderColor: '#ddd',
                             borderBottomWidth: 0.5
                         }}>
@@ -118,26 +120,28 @@ function HDWalletInfo() {
                                 />
                             </>
                         }
-                        <Text style={tailwind(`text-base`)}>
-                            {hdWallet.mnemonic?.phrase}
-                        </Text>
                         <Pressable 
-                            onPress={() => Clipboard.setString(wallet.mnemonic?.phrase ?? '')}>
-                            <Text style={tailwind(`text-yellow-500 text-base text-center`)}>点击复制</Text>
+                            onPress={() => {
+                                Clipboard.setString(wallet.mnemonic?.phrase ?? '')
+                            }}>
+                            <Text style={tailwind(`text-base`)}>
+                                {hdWallet.mnemonic?.phrase}
+                            </Text>
                         </Pressable>
                     </View>
                     {
+                        wallet.children && wallet.children.length ?
                         <View style={tailwind(`px-3 py-2`)}>
                             <Text style={tailwind(`py-4 text-sm text-gray-600`)}>币种钱包</Text>
                             {
-                                wallet.children?.map((item: HDWallet) => (
+                                wallet.children.map((item: HDWallet) => (
                                     <WalletItem 
                                         key={item.address + item.chain + item.index} 
                                         wallet={item} 
                                     />
                                 ))
                             }
-                        </View>
+                        </View> : <></>
                     }
                 </View>
             </ScrollView>

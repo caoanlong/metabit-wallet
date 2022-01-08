@@ -279,6 +279,7 @@ function derive(this: HDWallet, index: number, chain: string): HDWallet {
             throw new Error("invalid path component - " + component)
         }
     }
+    result.parentKey = parent.publicKey
     return result
 }
 
@@ -295,7 +296,7 @@ export function createWalletByPrivateKey(privateKey: string, chain: string, inde
     const { publicKey, compressPublicKey } = getPubkeyFromPrikey(privKey)
     const address = getAddress(privKey, coinType)
     return {
-        privateKey,
+        privateKey: privateKey.startsWith('0x') ? privateKey : '0x' + privateKey,
         publicKey: '0x' + publicKey.toString('hex'),
         compressPublicKey: '0x' + compressPublicKey.toString('hex'),
         chainCode: '',
