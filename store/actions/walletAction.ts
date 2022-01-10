@@ -7,8 +7,7 @@ import {
     ADD_CHILD_WALLET, 
     CHANGE_WALLET, 
     CREATE_WALLET, 
-    DEL_TOKEN,
-    DEL_WALLET
+    DEL_TOKEN
 } from "../constants"
 
 // const engine = WalletEngine.getInstance()
@@ -17,38 +16,19 @@ import {
  * @param mnemonic 
  * @returns 
  */
-export const createWallet = (mnemonic?: string) => {
+export const createWallet = (mnemonic?: string, selected?: boolean) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        const root = createWalletByMnemonic(mnemonic)
+        const wallets: HDWallet[] = createWalletByMnemonic(mnemonic)
         dispatch({
             type: CREATE_WALLET,
-            payload: root
+            payload: wallets
         })
-        dispatch({
-            type: CHANGE_WALLET,
-            payload: root
-        })
-    }
-}
-
-export const delWallet = (wallet: HDWallet) => {
-    return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        const wallets: HDWallet[] = getState().wallet.wallets
-        let list: HDWallet[] = []
-        if (wallet.type === -1 || !wallet.parentKey) {
-            list = wallets.filter((item: HDWallet) => item.chainCode !== wallet.chainCode)
-        } else {
-            list = [...wallets]
-            for (let i = 0; i < list.length; i++) {
-                if (list[i].children && list[i].children?.length) {
-                    list[i].children = list[i].children?.filter((item: HDWallet) => !(item.address === wallet.address && item.chain === wallet.chain))
-                }
-            }
+        if (selected) {
+            dispatch({
+                type: CHANGE_WALLET,
+                payload: wallets[1]  // 默认选择 Ethereum 钱包
+            })
         }
-        dispatch({
-            type: DEL_WALLET,
-            payload: list
-        })
     }
 }
 
@@ -60,25 +40,19 @@ export const delWallet = (wallet: HDWallet) => {
  */
 export const addChildWallet = (wallet: HDWallet, chain: string) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        const children = wallet.children
+        const children: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.parentId === wallet.id)
         let index = 0
-        if (children) {
-            if (children.length) {
-                const indexes = children.filter((item: HDWallet) => item.chain === chain).map((item: HDWallet) => item.index)
-                if (indexes && indexes.length) {
-                    const maxIndex = Math.max(...indexes)
-                    index = maxIndex + 1
-                }
+        if (children && children.length) {
+            const indexes = children.filter((item: HDWallet) => item.chain === chain).map((item: HDWallet) => item.index)
+            if (indexes && indexes.length) {
+                const maxIndex = Math.max(...indexes)
+                index = maxIndex + 1
             }
-        } else {
-            wallet.children = []
         }
         const child = deriveWallet(wallet, chain, index)
-        wallet.children?.push(child)
-        
         dispatch({
             type: ADD_CHILD_WALLET,
-            payload: wallet
+            payload: [child]
         })
     }
 }
@@ -89,9 +63,9 @@ export const addChildWallet = (wallet: HDWallet, chain: string) => {
  * @param chain 
  * @returns 
  */
-export const importWalletByPrivateKey = (privateKey: string, chain: string) => {
+export const importWalletByPrivateKey = (privateKey: string, chain: string, selected?: boolean) => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        const wallets: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.address && item.chain === chain)
+        const wallets: HDWallet[] = getState().wallet.wallets.filter((item: HDWallet) => item.type !== -1 && !item.parentId && item.chain === chain)
         let index = 0
         if (wallets && wallets.length) {
             const maxIndex = Math.max(...wallets.map((item: HDWallet) => item.index))
@@ -100,12 +74,14 @@ export const importWalletByPrivateKey = (privateKey: string, chain: string) => {
         const wallet: HDWallet = createWalletByPrivateKey(privateKey, chain, index)
         dispatch({
             type: CREATE_WALLET,
-            payload: wallet
+            payload: [wallet]
         })
-        dispatch({
-            type: CHANGE_WALLET,
-            payload: wallet
-        })
+        if (selected) {
+            dispatch({
+                type: CHANGE_WALLET,
+                payload: wallet
+            })
+        }
     }
     
 }

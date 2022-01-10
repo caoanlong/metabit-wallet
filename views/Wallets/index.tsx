@@ -15,8 +15,8 @@ function Wallets() {
     const insets = useSafeAreaInsets()
     const defaultHeight = getDefaultHeaderHeight(frame, false, insets.top)
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const hdWallets = useSelector((state: RootState) => state.wallet.wallets.filter((item: HDWallet) => !item.address))
-    const wallets = useSelector((state: RootState) => state.wallet.wallets.filter((item: HDWallet) => item.address))
+    const hdWallets = useSelector((state: RootState) => state.wallet.wallets.filter((item: HDWallet) => item.type === -1))
+    const wallets = useSelector((state: RootState) => state.wallet.wallets.filter((item: HDWallet) => item.type !== -1 && !item.parentId))
     
     return (
         <View style={tailwind(`absolute top-0 left-0 right-0 bottom-0`)}>
@@ -26,64 +26,72 @@ function Wallets() {
                 color={'#ffffff'} 
             />
             <View style={tailwind(`bg-blue-600 absolute z-0 top-0 left-0 right-0 h-1/3`)}></View>
-            <ScrollView 
-                contentInset={{ top: 0, left: 0, right: 0, bottom: 100 }}
+            <View 
                 style={{
                     ...tailwind(`relative h-full z-10`), 
                     paddingTop: defaultHeight
                 }}>
-                <View style={tailwind(`flex items-center py-6 bg-blue-600`)}>
-                    <Pressable 
-                        onPress={() => {
-                            navigation.push('importWallet', {
-                                type: 'mnemonic'
-                            })
-                        }}
-                        style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
-                        <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用助记词导入HD钱包</Text>
-                    </Pressable>
-                    <Pressable 
-                        onPress={() => {
-                            navigation.push('importWallet', {
-                                type: 'privateKey'
-                            })
-                        }}
-                        style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
-                        <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用私钥导入币种钱包</Text>
-                    </Pressable>
-                    <Pressable 
-                        onPress={() => {
-                            navigation.push('addWallet')
-                        }}
-                        style={tailwind(`w-56 py-2 bg-white rounded-full`)}>
-                        <Text style={tailwind(`text-blue-600 text-sm text-center`)}>创建新钱包</Text>
-                    </Pressable>
-                </View>
-                <View style={tailwind(`bg-gray-100`)}>
-                    {
-                        hdWallets && hdWallets.length ? 
-                        <View style={tailwind(`px-3 py-2`)}>
-                            <Text style={tailwind(`py-2 text-gray-500`)}>HD钱包列表</Text>
-                            {
-                                hdWallets.map((wallet: HDWallet) => (
-                                    <WalletItem key={wallet.chainCode} wallet={wallet} />
-                                ))
-                            }
-                        </View> : <></>
-                    }
-                    {
-                        wallets && wallets.length ? 
-                        <View style={tailwind(`px-3 py-2`)}>
-                            <Text style={tailwind(`py-2 text-gray-500`)}>币种钱包列表</Text>
-                            {
-                                wallets.map((wallet: HDWallet) => (
-                                    <WalletItem key={wallet.address} wallet={wallet} />
-                                ))
-                            }
-                        </View> : <></>
-                    }
-                </View>
-            </ScrollView>
+                <ScrollView>
+                    <View style={tailwind(`flex items-center py-6 bg-blue-600`)}>
+                        <Pressable 
+                            onPress={() => {
+                                navigation.push('importWallet', {
+                                    type: 'mnemonic',
+                                    action: 'back'
+                                })
+                            }}
+                            style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
+                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用助记词导入HD钱包</Text>
+                        </Pressable>
+                        <Pressable 
+                            onPress={() => {
+                                navigation.push('importWallet', {
+                                    type: 'privateKey',
+                                    action: 'back'
+                                })
+                            }}
+                            style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
+                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用私钥导入币种钱包</Text>
+                        </Pressable>
+                        <Pressable 
+                            onPress={() => {
+                                navigation.push('addWallet', {
+                                    action: 'back'
+                                })
+                            }}
+                            style={tailwind(`w-56 py-2 bg-white rounded-full`)}>
+                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>创建新钱包</Text>
+                        </Pressable>
+                    </View>
+                    <View style={tailwind(`bg-gray-100`)}>
+                        {
+                            hdWallets && hdWallets.length ? 
+                            <View style={tailwind(`px-3 py-2`)}>
+                                <Text style={tailwind(`py-2 text-gray-500`)}>HD钱包列表</Text>
+                                {
+                                    hdWallets.map((wallet: HDWallet) => (
+                                        <WalletItem key={wallet.id} wallet={wallet} />
+                                    ))
+                                }
+                            </View> : <></>
+                        }
+                        {
+                            wallets && wallets.length ? 
+                            <View style={tailwind(`px-3 py-2`)}>
+                                <Text style={tailwind(`py-2 text-gray-500`)}>币种钱包列表</Text>
+                                {
+                                    wallets.sort((a: HDWallet, b: HDWallet) => {
+                                        if (a.chain && b.chain) return a.chain.charCodeAt(0) - b.chain.charCodeAt(0)
+                                        return 1
+                                    }).map((wallet: HDWallet) => (
+                                        <WalletItem key={wallet.id} wallet={wallet} />
+                                    ))
+                                }
+                            </View> : <></>
+                        }
+                    </View>
+                </ScrollView>
+            </View>
         </View>
     )
 }

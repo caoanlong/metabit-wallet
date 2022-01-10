@@ -1,23 +1,28 @@
 import { ParamListBase, useNavigation, useRoute } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import React, { useState } from "react"
-import { Alert, Pressable, Text, TextInput, View } from "react-native"
+import { Pressable, Text, TextInput, View } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
 import Clipboard from '@react-native-clipboard/clipboard'
 import tailwind, { getColor } from "tailwind-rn"
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { createWallet, importWalletByPrivateKey } from "../../store/actions/walletAction"
 import { CHAINS } from "../../config"
+import { RootState } from "../../store"
 
 function ImportWallet() {
     const route = useRoute()
     const type = (route.params as any).type as string
+    const action = (route.params as any).action as string
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const dispatch = useDispatch()
+    const wallets = useSelector((state: RootState) => state.wallet.wallets) as HDWallet[]
     const [ text, setText ] = useState<string>('')
     const [ chain, setChain ] = useState<string>('Ethereum')
+    const [ toastVisible, setToastVisible ] = useState<boolean>(false)
+    const [ toastText, setToastText ] = useState<string>('')
     return (
-        <>
+        <View style={tailwind(`relative`)}>
             <View style={tailwind(`flex flex-row bg-white h-14`)}>
                 <Pressable 
                     onPress={() => navigation.goBack()}
@@ -83,21 +88,43 @@ function ImportWallet() {
                     disabled={!text.trim()}
                     onPress={() => {
                         try {
+                            const isSelect = !(action && action === 'back')
                             if (type === 'mnemonic') {
-                                dispatch(createWallet(text.trim()))
+                                const mnemonic = text.trim()
+                                dispatch(createWallet(mnemonic, isSelect))
                             } else if (type === 'privateKey') {
-                                dispatch(importWalletByPrivateKey(text.trim(), chain))
+                                const privateKey = text.trim()
+                                
+                                dispatch(importWalletByPrivateKey(privateKey, chain, isSelect))
                             }
-                            navigation.replace('main')
+                            if (action && action === 'back') {
+                                navigation.goBack()
+                            } else {
+                                navigation.replace('main')
+                            }
                         } catch (error: any) {
-                            Alert.alert(error)
+                            console.log(error)
+                            setToastText(JSON.stringify(error))
+                            setToastVisible(true)
+                            setTimeout(() => {
+                                setToastVisible(false)
+                            }, 1500)
                         }
                     }}
                     style={tailwind(`mt-8 py-3 rounded-full mb-16 ${!text.trim() ? 'bg-blue-200' : 'bg-blue-600'}`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>导入</Text>
                 </Pressable>
             </View>
-        </>
+            {
+                toastVisible ? 
+                <View style={tailwind(`absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center`)}>
+                    <View style={tailwind(`p-3 bg-black rounded`)}>
+                        <Text style={tailwind(`text-white`)}>{toastText}</Text>
+                    </View>
+                </View> : <></>
+            }
+            
+        </View>
     )
 }
 

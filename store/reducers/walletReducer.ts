@@ -5,6 +5,7 @@ import {
     DEL_WALLET,
     CLEAR_WALLET,  
     CHANGE_WALLET,
+    SET_WALLET,
     ADD_TOKEN,
     DEL_TOKEN
 } from "../constants"
@@ -26,15 +27,23 @@ const reducer = (state: WalletState = initState, action: AnyAction) => {
         case CREATE_WALLET:
             return { 
                 ...state, 
-                wallets: [ ...state.wallets, action.payload ]
+                wallets: [ ...state.wallets, ...action.payload ]
             }
         case ADD_CHILD_WALLET:
-            return { ...state }
+            return { ...state, wallets: [ ...state.wallets, ...action.payload ] }
         case CHANGE_WALLET:
             /**
              * 每次切换只能展示一种币种的钱包，因为需要切换主网与各种测试网络
              */
             return { ...state, selectedWallet: action.payload }
+        case SET_WALLET:
+            const wallet: HDWallet = action.payload
+            for (let i = 0; i < state.wallets.length; i++) {
+                if (wallet.publicKey === state.wallets[i].publicKey) {
+                    state.wallets[i].alias = wallet.alias
+                }
+            }
+            return { ...state, wallets: [...state.wallets] }
         case DEL_WALLET:
             return { ...state, wallets: action.payload }
         case CLEAR_WALLET:

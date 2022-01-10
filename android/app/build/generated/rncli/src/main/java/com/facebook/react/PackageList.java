@@ -13,14 +13,20 @@ import java.util.ArrayList;
 
 // @react-native-async-storage/async-storage
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+// @react-native-clipboard/clipboard
+import com.reactnativecommunity.clipboard.ClipboardPackage;
 // react-native-get-random-values
 import org.linusu.RNGetRandomValuesPackage;
 // react-native-pager-view
 import com.reactnativepagerview.PagerViewPackage;
+// react-native-randombytes
+import com.bitgo.randombytes.RandomBytesPackage;
 // react-native-safe-area-context
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
 import com.swmansion.rnscreens.RNScreensPackage;
+// react-native-svg
+import com.horcrux.svg.SvgPackage;
 // react-native-vector-icons
 import com.oblador.vectoricons.VectorIconsPackage;
 // react-native-webview
@@ -71,10 +77,13 @@ public class PackageList {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
       new AsyncStoragePackage(),
+      new ClipboardPackage(),
       new RNGetRandomValuesPackage(),
       new PagerViewPackage(),
+      new RandomBytesPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
+      new SvgPackage(),
       new VectorIconsPackage(),
       new RNCWebViewPackage()
     ));

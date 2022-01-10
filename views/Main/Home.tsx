@@ -17,12 +17,15 @@ import { SceneMap, TabBar, TabView } from "react-native-tab-view"
 import Decimal from 'decimal.js-light'
 import { useSelector, useDispatch } from 'react-redux'
 import Icon from 'react-native-vector-icons/Ionicons'
+import Clipboard from '@react-native-clipboard/clipboard'
+import Toast from 'react-native-root-toast'
 // import Modal from "react-native-modal"
 import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 // import { Contract, ContractFactory, ethers, Wallet } from "ethers"
 import { RootState } from "../../store"
-import { networkList } from "../../config"
+import { NETWORK_MAP } from "../../config"
+import { hideAddress } from "../../utils"
 // import { getRate } from "../../store/actions/rateAction"
 // import { hideAddress } from "../../utils"
 // import ERC20Abi from '../../config/ERC20Abi'
@@ -36,7 +39,7 @@ function Home() {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const { networkType } = useSelector((state: RootState) => state.network)
     const rate: any = useSelector((state: RootState) => state.rate)
-    const wallets = useSelector((state: RootState) => state.wallet.wallets)
+    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
 
     // const provider = new ethers.providers.JsonRpcProvider(`https://${networkType}.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099`)
     // const itemWallet = wallets.find((w: HDWallet, i: number) => w.address === selectedAddress || i === 0)
@@ -139,14 +142,14 @@ function Home() {
                     <Text 
                         style={{
                             ...tailwind(`text-blue-600 text-xs`),
-                            color: networkList[networkType].color
+                            color: NETWORK_MAP[selectedWallet.chain as string][networkType].color
                         }}>
-                        {networkList[networkType].name}
+                        {NETWORK_MAP[selectedWallet.chain as string][networkType].name}
                     </Text>
                     <Icon 
                         name="chevron-down" 
                         size={16} 
-                        color={networkList[networkType].color} 
+                        color={NETWORK_MAP[selectedWallet.chain as string][networkType].color} 
                     />
                 </Pressable>
                 <ScrollView
@@ -161,9 +164,18 @@ function Home() {
                     <View style={tailwind(`bg-blue-600 p-3`)}>
                         <View 
                             style={tailwind(`flex justify-center items-center bg-white py-6 rounded-lg`)}>
-                            <Text style={tailwind(`text-blue-300`)}>
-                                {/* {hideAddress(selectedWallet.address)} */}
-                            </Text>
+                            <Pressable 
+                                onPress={() => {
+                                    Clipboard.setString(selectedWallet.address)
+                                    Toast.show('复制成功', {
+                                        position: Toast.positions.CENTER,
+                                        shadow: false
+                                    })
+                                }}>
+                                <Text style={tailwind(`text-blue-300`)}>
+                                    {hideAddress(selectedWallet.address)}
+                                </Text>
+                            </Pressable>
                             <Text style={tailwind(`text-blue-600 text-2xl font-bold`)}>
                                 ${parseFloat(balance)}
                             </Text>

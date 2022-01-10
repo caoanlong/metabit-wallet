@@ -272,8 +272,6 @@ PODS:
   - React-jsinspector (0.66.2)
   - React-logger (0.66.2):
     - glog
-  - react-native-blur (0.8.0):
-    - React
   - react-native-get-random-values (1.7.0):
     - React-Core
   - react-native-pager-view (5.4.8):
@@ -405,7 +403,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
-  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -482,8 +479,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
-  react-native-blur:
-    :path: "../node_modules/@react-native-community/blur"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
   react-native-pager-view:
@@ -562,7 +557,6 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 573adf0d6ce5e05c55872dfde5b1589acb88a96f
   React-jsinspector: b08b2d5e86cef9dc4bb69f0aa0bbe6d210fb7da5
   React-logger: faee236598b0f7e1a5e3b68577016ac451f1f993
-  react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
   react-native-pager-view: c44c385eb20f0733c53685456fb9eb8d8469a1bb
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846

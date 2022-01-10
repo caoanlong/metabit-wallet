@@ -1,3 +1,6 @@
+import { chain } from "lodash"
+import { ImageSourcePropType } from "react-native"
+
 export const MAINNET = 'mainnet'
 export const ROPSTEN = 'ropsten'
 export const KOVAN = 'kovan'
@@ -13,61 +16,75 @@ export type Network = {
 	chainId?: number,
 	hexChainId?: string,
 	color: string,
-	networkType: string
+	networkType: string,
+	hdIndex: number
 }
 
-export const networkList: { [key: string]: Network} = {
-	[MAINNET]: {
-		name: 'Ethereum Main Network',
-		shortName: 'Ethereum',
-		networkId: 1,
-		chainId: 1,
-		hexChainId: '0x1',
-		color: '#3cc29e',
-		networkType: 'mainnet'
+export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } } = {
+	'Ethereum': {
+		'mainnet': {
+			name: 'Ethereum Main Network',
+			shortName: 'Ethereum',
+			networkId: 1,
+			chainId: 1,
+			hexChainId: '0x1',
+			color: '#3cc29e',
+			networkType: 'mainnet',
+			hdIndex: 60
+		},
+		'ropsten': {
+			name: 'Ropsten Test Network',
+			shortName: 'Ropsten',
+			networkId: 3,
+			chainId: 3,
+			hexChainId: '0x3',
+			color: '#ff4a8d',
+			networkType: 'ropsten',
+			hdIndex: 60
+		},
+		'kovan': {
+			name: 'Kovan Test Network',
+			shortName: 'Kovan',
+			networkId: 42,
+			chainId: 42,
+			hexChainId: '0x2a',
+			color: '#7057ff',
+			networkType: 'kovan',
+			hdIndex: 60
+		},
+		'rinkeby': {
+			name: 'Rinkeby Test Network',
+			shortName: 'Rinkeby',
+			networkId: 4,
+			chainId: 4,
+			hexChainId: '0x4',
+			color: '#f6c343',
+			networkType: 'rinkeby',
+			hdIndex: 60
+		},
+		'goerly': {
+			name: 'Goerli Test Network',
+			shortName: 'Goerli',
+			networkId: 5,
+			chainId: 5,
+			hexChainId: '0x5',
+			color: '#3099f2',
+			networkType: 'goerly',
+			hdIndex: 60
+		},
 	},
-	[ROPSTEN]: {
-		name: 'Ropsten Test Network',
-		shortName: 'Ropsten',
-		networkId: 3,
-		chainId: 3,
-		hexChainId: '0x3',
-		color: '#ff4a8d',
-		networkType: 'ropsten'
-	},
-	[KOVAN]: {
-		name: 'Kovan Test Network',
-		shortName: 'Kovan',
-		networkId: 42,
-		chainId: 42,
-		hexChainId: '0x2a',
-		color: '#7057ff',
-		networkType: 'kovan'
-	},
-	[RINKEBY]: {
-		name: 'Rinkeby Test Network',
-		shortName: 'Rinkeby',
-		networkId: 4,
-		chainId: 4,
-		hexChainId: '0x4',
-		color: '#f6c343',
-		networkType: 'rinkeby',
-	},
-	[GOERLI]: {
-		name: 'Goerli Test Network',
-		shortName: 'Goerli',
-		networkId: 5,
-		chainId: 5,
-		hexChainId: '0x5',
-		color: '#3099f2',
-		networkType: 'goerly',
-	},
-	[RPC]: {
-		name: 'Private Network',
-		shortName: 'Private',
-		color: 'f2f3f4',
-		networkType: 'rpc',
-	},
+	'Tron': {
+		'mainnet': {
+			name: 'Tron Main Network',
+			shortName: 'Tron',
+			networkId: 1,
+			chainId: 1,
+			hexChainId: '0x1',
+			color: '#3cc29e',
+			networkType: 'mainnet',
+			hdIndex: 195
+		}
+	}
 }
 
 export const CHAINS = [
@@ -80,4 +97,10 @@ export const CHAIN_COINTYPE: {[key: string]: number} = {
 	'Polygon': 60,
 	'BSC': 60,
 	'Tron': 195
+}
+
+export const CHAIN_MAP: {[key: string]: ImageSourcePropType} = {
+	'Tron': require('../assets/icons/trx.png'),
+	'Bitcoin': require('../assets/icons/btc.png'),
+	'Ethereum': require('../assets/icons/eth.png')
 }

@@ -24,7 +24,7 @@ export const hexStrToBuf = (str: string): Buffer => {
     return buf
 }
 
-export function createWalletByMnemonic(mnemonic?: string): HDWallet {
+export function createWalletByMnemonic(mnemonic?: string): HDWallet[] {
     let index = 0
     const wallets: HDWallet[] = store.getState().wallet.wallets
     const roots = wallets.filter((item: HDWallet) => item.type === -1)
@@ -32,14 +32,10 @@ export function createWalletByMnemonic(mnemonic?: string): HDWallet {
         const maxIndex = Math.max(...roots.map((item: HDWallet) => item.index))
         index = maxIndex + 1
     }
-    
     const root: HDWallet = createHDWallet({ mnemonic, index })
     // 默认创建以太坊钱包和波场
     // const btc = deriveWallet(root, 'Bitcoin')
     const eth = deriveWallet(root, 'Ethereum')
     const trx = deriveWallet(root, 'Tron')
-    // engine.addWallet([ root.wallet, btc.wallet, eth.wallet, trx.wallet ])
-    if (!root.children) root.children = []
-    root.children.push(eth, trx)
-    return root
+    return [root, eth, trx]
 }

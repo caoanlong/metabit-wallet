@@ -13,12 +13,13 @@ function GenerateMnemonic() {
 
     useEffect(() => {
         setTimeout(() => {
-            const root = createWalletByMnemonic()
+            const list = createWalletByMnemonic()
+            const root = list[0]
             if (root && root.mnemonic && root.mnemonic.phrase) {
                 setMnemonic(root.mnemonic.phrase.split(' '))
                 setLoading(false)
             }
-        }, 200)
+        }, 0)
     }, [])
 
     return (

@@ -1,19 +1,20 @@
 import { ParamListBase, useNavigation, useRoute } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import React, { useState } from "react"
-import { Alert, Pressable, Text, View } from "react-native"
-import { useDispatch, useSelector } from "react-redux"
+import React, { useContext, useState } from "react"
+import { Pressable, Text, View } from "react-native"
+import { useDispatch } from "react-redux"
 import tailwind, { getColor } from "tailwind-rn"
 import Icon from "react-native-vector-icons/Ionicons"
 import lodash from 'lodash'
-import { RootState } from "../../store"
 import { createWallet } from "../../store/actions/walletAction"
+import { ActionContext } from "."
 
 export interface FromGenerateMnemobicParams {
     mnemonic: string[]
 }
 
 function ConfirmMnemonic() {
+    const context = useContext(ActionContext)
     const route = useRoute()
     const { mnemonic } = route.params as FromGenerateMnemobicParams
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
@@ -102,10 +103,15 @@ function ConfirmMnemonic() {
                     disabled={selected.join('') !== mnemonic.join('')}
                     onPress={() => {
                         try {
-                            dispatch(createWallet(mnemonic.join(' ')))
-                            navigation.replace('main')
+                            const isSelect = !(context && context.action === 'back')
+                            dispatch(createWallet(mnemonic.join(' '), isSelect))
+                            if (context && context.action === 'back') {
+                                navigation.getParent()?.goBack()
+                            } else {
+                                navigation.replace('main')
+                            }
                         } catch (error: any) {
-                            Alert.alert(error)
+                            console.log(error)
                         }
                     }}
                     style={tailwind(`py-3 rounded-full ${selected.join('') !== mnemonic.join('') ? 'bg-blue-200' : 'bg-blue-600'}`)}>

@@ -13,6 +13,7 @@ interface Mnemonic {
 }
 
 interface HDWallet {
+    id: string,
     name: string,
     alias?: string,
     privateKey: string, 
@@ -26,7 +27,7 @@ interface HDWallet {
     index: number,
     chain?: string,
     children?: HDWallet[],
-    parentKey?: string
+    parentId?: string
 }
 
 type Token = {

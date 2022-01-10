@@ -57,7 +57,7 @@ function DeriveWallet() {
                             dispatch(addChildWallet(parent, chain))
                             navigation.goBack()
                         } catch (error: any) {
-                            Alert.alert(error)
+                            Alert.alert(JSON.stringify(error))
                         }
                     }}
                     style={tailwind(`mt-8 py-3 rounded-full mb-16 bg-blue-600`)}>
