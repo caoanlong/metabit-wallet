@@ -10,7 +10,8 @@ export interface RateState {
     DAI: number,
     WBTC: number,
     YFI: number,
-    UNI: number
+    UNI: number,
+    TRX: number
 }
 
 const initState: RateState = {
@@ -22,7 +23,8 @@ const initState: RateState = {
     DAI: 1,
     WBTC: 1,
     YFI: 1,
-    UNI: 1
+    UNI: 1,
+    TRX: 0.5
 }
 
 const reducer = (state: RateState = initState, action: AnyAction) => {

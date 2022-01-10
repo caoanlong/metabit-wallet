@@ -9,6 +9,9 @@ export const GOERLI = 'goerli'
 export const RPC = 'rpc'
 export const NO_RPC_BLOCK_EXPLORER = 'NO_BLOCK_EXPLORER'
 
+// export interface Token {
+
+// }
 export type Network = {
 	name: string,
 	shortName: string,
@@ -19,10 +22,13 @@ export type Network = {
 	networkType: string,
 	hdIndex: number,
 	api: string,
-	scan: string
+	scan: string,
+	tokens: Token[]
 }
-
-export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } } = {
+export interface NetworkMap {
+	[chain: string]: { [networkType: string]: Network }
+}
+export const NETWORK_MAP: NetworkMap = {
 	'Ethereum': {
 		'mainnet': {
 			name: 'Ethereum Main Network',
@@ -34,7 +40,24 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'mainnet',
 			hdIndex: 60,
 			api: 'https://mainnet.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
-			scan: 'https://etherscan.io/'
+			scan: 'https://etherscan.io/',
+			tokens: [
+				{
+					name: 'ETH',
+					logo: '',
+					symbol: 'ETH',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				},{
+					name: 'Tether USDT',
+					logo: '',
+					symbol: 'USDT',
+					decimals: 6,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 		'ropsten': {
 			name: 'Ropsten Test Network',
@@ -46,7 +69,17 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'ropsten',
 			hdIndex: 60,
 			api: 'https://ropsten.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
-			scan: 'https://ropsten.etherscan.io/'
+			scan: 'https://ropsten.etherscan.io/',
+			tokens: [
+				{
+					name: 'ETH',
+					logo: '',
+					symbol: 'ETH',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 		'kovan': {
 			name: 'Kovan Test Network',
@@ -58,7 +91,17 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'kovan',
 			hdIndex: 60,
 			api: 'https://kovan.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
-			scan: 'https://kovan.etherscan.io/'
+			scan: 'https://kovan.etherscan.io/',
+			tokens: [
+				{
+					name: 'ETH',
+					logo: '',
+					symbol: 'ETH',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 		'rinkeby': {
 			name: 'Rinkeby Test Network',
@@ -70,7 +113,17 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'rinkeby',
 			hdIndex: 60,
 			api: 'https://rinkeby.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
-			scan: 'https://rinkeby.etherscan.io/'
+			scan: 'https://rinkeby.etherscan.io/',
+			tokens: [
+				{
+					name: 'ETH',
+					logo: '',
+					symbol: 'ETH',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 		'goerly': {
 			name: 'Goerli Test Network',
@@ -82,7 +135,17 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'goerly',
 			hdIndex: 60,
 			api: 'https://goerly.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
-			scan: 'https://goerli.etherscan.io/'
+			scan: 'https://goerli.etherscan.io/',
+			tokens: [
+				{
+					name: 'ETH',
+					logo: '',
+					symbol: 'ETH',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 	},
 	'Tron': {
@@ -96,7 +159,24 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'mainnet',
 			hdIndex: 195,
 			api: '',
-			scan: 'https://tronscan.org/#/'
+			scan: 'https://tronscan.org/#/',
+			tokens: [
+				{
+					name: 'TRON(TRX)',
+					logo: '',
+					symbol: 'TRX',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				},{
+					name: 'Tether USDT',
+					logo: '',
+					symbol: 'USDT',
+					decimals: 6,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 		'shasta': {
 			name: 'Shasta test Network',
@@ -108,7 +188,17 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'shasta',
 			hdIndex: 195,
 			api: 'https://api.shasta.trongrid.io',
-			scan: 'https://shasta.tronscan.org/#/'
+			scan: 'https://shasta.tronscan.org/#/',
+			tokens: [
+				{
+					name: 'TRON(TRX)',
+					logo: '',
+					symbol: 'TRX',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				}
+			]
 		},
 		'nile': {
 			name: 'Nile test Network',
@@ -120,7 +210,17 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			networkType: 'nile',
 			hdIndex: 195,
 			api: 'https://api.nileex.io',
-			scan: 'https://nile.tronscan.org/#/'
+			scan: 'https://nile.tronscan.org/#/',
+			tokens: [
+				{
+					name: 'TRON(TRX)',
+					logo: '',
+					symbol: 'TRX',
+					decimals: 1,
+					address: '',
+					balance: '0'
+				}
+			]
 		}
 	}
 }
@@ -140,5 +240,8 @@ export const CHAIN_COINTYPE: {[key: string]: number} = {
 export const CHAIN_MAP: {[key: string]: ImageSourcePropType} = {
 	'Tron': require('../assets/icons/trx.png'),
 	'Bitcoin': require('../assets/icons/btc.png'),
-	'Ethereum': require('../assets/icons/eth.png')
+	'Ethereum': require('../assets/icons/eth.png'),
+	'ETH': require('../assets/icons/eth.png'),
+	'TRX': require('../assets/icons/trx.png'),
+	'USDT': require('../assets/icons/usdt.png'),
 }

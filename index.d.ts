@@ -33,8 +33,6 @@ interface HDWallet {
 type Token = {
     name: string,
     logo: any,
-    erc20?: boolean,
-    erc721?: boolean,
     symbol: string,
     decimals?: number,
     address?: string,

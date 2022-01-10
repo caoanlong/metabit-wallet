@@ -24,8 +24,8 @@ import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 // import { Contract, ContractFactory, ethers, Wallet } from "ethers"
 import { RootState } from "../../store"
-import { NETWORK_MAP } from "../../config"
 import { hideAddress } from "../../utils"
+import { CHAIN_MAP, NetworkMap } from "../../config"
 // import { getRate } from "../../store/actions/rateAction"
 // import { hideAddress } from "../../utils"
 // import ERC20Abi from '../../config/ERC20Abi'
@@ -37,7 +37,8 @@ function Home() {
     }
     const dispatch = useDispatch()
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const { networkType } = useSelector((state: RootState) => state.network)
+    const networkType: string = useSelector((state: RootState) => state.network.networkType)
+    const networkMap: NetworkMap = useSelector((state: RootState) => state.network.networkMap)
     const rate: any = useSelector((state: RootState) => state.rate)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
 
@@ -46,7 +47,7 @@ function Home() {
     // const [ selectedWallet, setSelectedWallet ] = useState<HDWallet>(itemWallet)
     // const wallet = new Wallet(selectedWallet.privateKey, provider)
     // const contracts: Contract[] = tokens.filter((item: Token) => item.address).map((item: Token) => new Contract(item.address || '', ERC20Abi, provider))
-    const tokens: Token[] = []
+    // const tokens: Token[] = []
     // total balance
     const [ balance, setBalance ] = useState<string>('0.0')
     
@@ -102,13 +103,13 @@ function Home() {
     const Tokens = () => (
         <>
             {
-                tokens.map((item: Token) => (
+                networkMap[selectedWallet.chain as string][networkType].tokens.map((item: Token) => (
                     <View 
                         key={item.symbol} 
                         style={tailwind(`flex flex-row items-center p-4 bg-white mb-2`)}>
                         <Image
                             style={tailwind(`w-10 h-10 mr-4 rounded-full bg-gray-200`)}
-                            source={item.logo}
+                            source={CHAIN_MAP[item.symbol]}
                         />
                         <Text style={tailwind(`text-black text-xl`)}>{item.symbol}</Text>
                         <View style={tailwind(`flex-1`)}>
@@ -142,14 +143,14 @@ function Home() {
                     <Text 
                         style={{
                             ...tailwind(`text-blue-600 text-xs`),
-                            color: NETWORK_MAP[selectedWallet.chain as string][networkType].color
+                            color: networkMap[selectedWallet.chain as string][networkType].color
                         }}>
-                        {NETWORK_MAP[selectedWallet.chain as string][networkType].name}
+                        {networkMap[selectedWallet.chain as string][networkType].name}
                     </Text>
                     <Icon 
                         name="chevron-down" 
                         size={16} 
-                        color={NETWORK_MAP[selectedWallet.chain as string][networkType].color} 
+                        color={networkMap[selectedWallet.chain as string][networkType].color} 
                     />
                 </Pressable>
                 <ScrollView
