@@ -7,7 +7,8 @@ import {
     ADD_CHILD_WALLET, 
     CHANGE_WALLET, 
     CREATE_WALLET, 
-    DEL_TOKEN
+    DEL_TOKEN,
+    SET_NETWORK_TYPE
 } from "../constants"
 
 // const engine = WalletEngine.getInstance()
@@ -27,6 +28,10 @@ export const createWallet = (mnemonic?: string, selected?: boolean) => {
             dispatch({
                 type: CHANGE_WALLET,
                 payload: wallets[1]  // 默认选择 Ethereum 钱包
+            })
+            dispatch({
+                type: SET_NETWORK_TYPE,
+                payload: 'mainnet'
             })
         }
     }
@@ -81,6 +86,10 @@ export const importWalletByPrivateKey = (privateKey: string, chain: string, sele
                 type: CHANGE_WALLET,
                 payload: wallet
             })
+            dispatch({
+                type: SET_NETWORK_TYPE,
+                payload: 'mainnet'
+            })
         }
     }
     
@@ -91,6 +100,10 @@ export const changeWallet = (wallet: HDWallet) => {
         dispatch({
             type: CHANGE_WALLET,
             payload: wallet
+        })
+        dispatch({
+            type: SET_NETWORK_TYPE,
+            payload: 'mainnet'
         })
     }
 }

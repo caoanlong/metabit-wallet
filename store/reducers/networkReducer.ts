@@ -1,5 +1,4 @@
 import { AnyAction } from "redux"
-import { MAINNET } from "../../config"
 import { SET_NETWORK_TYPE, RESET_NETWORK_TYPE } from "../constants"
 
 interface NetworkState {
@@ -7,7 +6,7 @@ interface NetworkState {
 }
 
 const initState: NetworkState = {
-    networkType: MAINNET,
+    networkType: 'mainnet',
 }
 
 const reducer = (state: NetworkState = initState, action: AnyAction) => {

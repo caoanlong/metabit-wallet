@@ -17,7 +17,9 @@ export type Network = {
 	hexChainId?: string,
 	color: string,
 	networkType: string,
-	hdIndex: number
+	hdIndex: number,
+	api: string,
+	scan: string
 }
 
 export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } } = {
@@ -30,7 +32,9 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			hexChainId: '0x1',
 			color: '#3cc29e',
 			networkType: 'mainnet',
-			hdIndex: 60
+			hdIndex: 60,
+			api: 'https://mainnet.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
+			scan: 'https://etherscan.io/'
 		},
 		'ropsten': {
 			name: 'Ropsten Test Network',
@@ -40,7 +44,9 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			hexChainId: '0x3',
 			color: '#ff4a8d',
 			networkType: 'ropsten',
-			hdIndex: 60
+			hdIndex: 60,
+			api: 'https://ropsten.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
+			scan: 'https://ropsten.etherscan.io/'
 		},
 		'kovan': {
 			name: 'Kovan Test Network',
@@ -50,7 +56,9 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			hexChainId: '0x2a',
 			color: '#7057ff',
 			networkType: 'kovan',
-			hdIndex: 60
+			hdIndex: 60,
+			api: 'https://kovan.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
+			scan: 'https://kovan.etherscan.io/'
 		},
 		'rinkeby': {
 			name: 'Rinkeby Test Network',
@@ -60,7 +68,9 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			hexChainId: '0x4',
 			color: '#f6c343',
 			networkType: 'rinkeby',
-			hdIndex: 60
+			hdIndex: 60,
+			api: 'https://rinkeby.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
+			scan: 'https://rinkeby.etherscan.io/'
 		},
 		'goerly': {
 			name: 'Goerli Test Network',
@@ -70,7 +80,9 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			hexChainId: '0x5',
 			color: '#3099f2',
 			networkType: 'goerly',
-			hdIndex: 60
+			hdIndex: 60,
+			api: 'https://goerly.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
+			scan: 'https://goerli.etherscan.io/'
 		},
 	},
 	'Tron': {
@@ -82,7 +94,33 @@ export const NETWORK_MAP: { [chain: string]: { [networkType: string]: Network } 
 			hexChainId: '0x1',
 			color: '#3cc29e',
 			networkType: 'mainnet',
-			hdIndex: 195
+			hdIndex: 195,
+			api: '',
+			scan: 'https://tronscan.org/#/'
+		},
+		'shasta': {
+			name: 'Shasta test Network',
+			shortName: 'Shasta',
+			networkId: 1,
+			chainId: 1,
+			hexChainId: '0x1',
+			color: '#3cc29e',
+			networkType: 'shasta',
+			hdIndex: 195,
+			api: 'https://api.shasta.trongrid.io',
+			scan: 'https://shasta.tronscan.org/#/'
+		},
+		'nile': {
+			name: 'Nile test Network',
+			shortName: 'Nile',
+			networkId: 1,
+			chainId: 1,
+			hexChainId: '0x1',
+			color: '#3cc29e',
+			networkType: 'nile',
+			hdIndex: 195,
+			api: 'https://api.nileex.io',
+			scan: 'https://nile.tronscan.org/#/'
 		}
 	}
 }
