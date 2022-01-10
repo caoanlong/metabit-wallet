@@ -1,4 +1,5 @@
 import { AnyAction } from "redux"
+import { NetworkMap, NETWORK_MAP } from "../../config"
 import { 
     ADD_CHILD_WALLET, 
     CREATE_WALLET, 
@@ -7,18 +8,25 @@ import {
     CHANGE_WALLET,
     SET_WALLET,
     ADD_TOKEN,
-    DEL_TOKEN
+    DEL_TOKEN,
+    SET_NETWORK_TYPE,
+    RESET_NETWORK_TYPE,
+    SET_TOKEN
 } from "../constants"
 
 export interface WalletState {
     wallets: HDWallet[],
     selectedWallet: HDWallet | undefined,
+    networkType: string,
+    networkMap: NetworkMap,
     tokenMap: TokenMap
 }
 
 const initState: WalletState = {
     wallets: [],
     selectedWallet: undefined,
+    networkType: 'mainnet',
+    networkMap: { ...NETWORK_MAP },
     tokenMap: {}
 }
 
@@ -52,6 +60,13 @@ const reducer = (state: WalletState = initState, action: AnyAction) => {
             return { ...state, tokenMap: action.payload }
         case DEL_TOKEN:
             return { ...state, tokenMap: action.payload }
+        case SET_NETWORK_TYPE:
+            return { ...state, networkType: action.payload }
+        case RESET_NETWORK_TYPE:
+            return { ...initState }
+        case SET_TOKEN:
+            state.networkMap[state.selectedWallet?.chain as string][state.networkType].tokens = action.payload
+            return { ...state, networkMap: { ...state.networkMap } }
         default:
             return state
     }

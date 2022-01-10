@@ -1,5 +1,7 @@
-import { ethers, Wallet } from "ethers"
+import { Contract, ethers, Wallet } from "ethers"
 import { Dispatch, AnyAction } from "redux"
+import { Network, NetworkMap } from "../../config"
+import ABI from "../../config/ABI"
 import { createWalletByMnemonic } from "../../utils"
 import { createWalletByPrivateKey, deriveWallet } from "../../utils/wallet"
 import { 
@@ -8,7 +10,8 @@ import {
     CHANGE_WALLET, 
     CREATE_WALLET, 
     DEL_TOKEN,
-    SET_NETWORK_TYPE
+    SET_NETWORK_TYPE,
+    SET_TOKEN
 } from "../constants"
 
 // const engine = WalletEngine.getInstance()
@@ -127,5 +130,45 @@ export const delToken = (address: string, symbol: string) => {
             type: DEL_TOKEN,
             payload: tokenMap
         })
+    }
+}
+
+export const setNetworkType = (type: string) => {
+    return (dispatch: Dispatch<AnyAction>) => {
+        dispatch({
+            type: SET_NETWORK_TYPE,
+            payload: type
+        })
+    }
+}
+
+export const getBalance = (w: HDWallet) => {
+    return async (dispatch: Dispatch<AnyAction>, getState: any) => {
+        const networkMap: NetworkMap = getState().wallet.networkMap
+        const networkType: string = getState().wallet.networkType
+        const network: Network = networkMap[w.chain as string][networkType]
+        if (w.chain === 'Ethereum') {
+            const provider = new ethers.providers.JsonRpcProvider(network.api)
+            const wallet = new Wallet(w.privateKey, provider)
+            const res = await wallet.getBalance()
+            const balance = ethers.utils.formatEther(res)
+            network.tokens[0].balance = balance
+            const tokens = network.tokens.filter((item: Token) => item.address)
+            if (tokens.length > 0) {
+                const contracts: Contract[] = tokens.map((item: Token) => new Contract(item.address as string, ABI[item.type as string], provider))
+                const handlers = contracts.map((contract: Contract) => contract.balanceOf(w.address))
+                const result = await Promise.all([...handlers])
+                for (let i = 1; i < network.tokens.length; i++) {
+                    network.tokens[i].balance = String(+ethers.utils.formatUnits(result[i-1], 'wei') / Math.pow(10, network.tokens[i].decimals ?? 6))
+                }
+            }
+            
+            dispatch({
+                type: SET_TOKEN,
+                payload: network.tokens
+            })
+        } else if (w.chain === 'Tron') {
+            return '0'
+        }
     }
 }

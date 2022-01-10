@@ -7,13 +7,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import tailwind, { getColor } from "tailwind-rn"
 import { Network, NETWORK_MAP } from "../../config"
 import { RootState } from "../../store"
-import { setNetworkType } from "../../store/actions/networkAction"
+import { setNetworkType } from "../../store/actions/walletAction"
 
 function Networks() {
     const isDarkMode = useColorScheme() === 'dark'
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const dispatch = useDispatch()
-    const { networkType } = useSelector((state: RootState) => state.network)
+    const networkType = useSelector((state: RootState) => state.wallet.networkType)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
     const networks = Object.keys(NETWORK_MAP[selectedWallet.chain as string]).map((item: string) => NETWORK_MAP[selectedWallet.chain as string][item])
     

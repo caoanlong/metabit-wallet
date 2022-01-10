@@ -36,7 +36,8 @@ type Token = {
     symbol: string,
     decimals?: number,
     address?: string,
-    balance: string
+    balance: string,
+    type?: string
 }
 type AddressTokens = {
     [symbol: string]: Token

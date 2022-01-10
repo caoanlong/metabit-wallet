@@ -22,13 +22,11 @@ import Toast from 'react-native-root-toast'
 // import Modal from "react-native-modal"
 import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-// import { Contract, ContractFactory, ethers, Wallet } from "ethers"
 import { RootState } from "../../store"
 import { hideAddress } from "../../utils"
 import { CHAIN_MAP, NetworkMap } from "../../config"
+import { getBalance } from "../../store/actions/walletAction"
 // import { getRate } from "../../store/actions/rateAction"
-// import { hideAddress } from "../../utils"
-// import ERC20Abi from '../../config/ERC20Abi'
 
 function Home() {
     const isDarkMode = useColorScheme() === 'dark'
@@ -37,18 +35,10 @@ function Home() {
     }
     const dispatch = useDispatch()
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const networkType: string = useSelector((state: RootState) => state.network.networkType)
-    const networkMap: NetworkMap = useSelector((state: RootState) => state.network.networkMap)
+    const networkType: string = useSelector((state: RootState) => state.wallet.networkType)
+    const networkMap: NetworkMap = useSelector((state: RootState) => state.wallet.networkMap)
     const rate: any = useSelector((state: RootState) => state.rate)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-
-    // const provider = new ethers.providers.JsonRpcProvider(`https://${networkType}.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099`)
-    // const itemWallet = wallets.find((w: HDWallet, i: number) => w.address === selectedAddress || i === 0)
-    // const [ selectedWallet, setSelectedWallet ] = useState<HDWallet>(itemWallet)
-    // const wallet = new Wallet(selectedWallet.privateKey, provider)
-    // const contracts: Contract[] = tokens.filter((item: Token) => item.address).map((item: Token) => new Contract(item.address || '', ERC20Abi, provider))
-    // const tokens: Token[] = []
-    // total balance
     const [ balance, setBalance ] = useState<string>('0.0')
     
     const [ index, setIndex ] = useState<number>(0)
@@ -58,47 +48,18 @@ function Home() {
     ])
     const [ refreshing, setRefreshing ] = useState<boolean>(false)
 
-    /**
-     * 获取ETH余额
-     */
-    // const getBalance = (symbol: string = 'ETH') => {
-    //     setRefreshing(true)
-    //     const handlers = contracts.map((contract: Contract) => contract.balanceOf(selectedWallet.address))
-    //     Promise.all([wallet.getBalance(), ...handlers]).then(res => {
-    //         for (let i = 0; i < res.length; i++) {
-    //             if (i === 0) {
-    //                 tokens[i].balance = ethers.utils.formatEther(res[i])
-    //             } else {
-    //                 tokens[i].balance = +ethers.utils.formatUnits(res[i], 'wei') / Math.pow(10, tokens[i].decimals)
-    //             }
-    //         }
-    //         // dispatch(setTokens([...tokens]))
-    //     }).catch(err => {
-    //         console.log(err)
-    //     }).finally(() => {
-    //         setRefreshing(false)
-    //     })
-    //     dispatch(getRate(symbol))
-    // }
+    useEffect(() => {
+        dispatch(getBalance(selectedWallet))
+    }, [selectedWallet, networkType])
 
-    // useEffect(() => {
-    //     if (selectedAddress) {
-    //         const item = wallets.find((w: HDWallet, i: number) => w.address === selectedAddress)
-    //         setSelectedWallet(item)
-    //     }
-    // }, [selectedAddress])
-
-    // useEffect(() => {
-    //     getBalance()
-    // }, [networkType, selectedWallet.address])
-
-    // useEffect(() => {
-    //     let sum = '0'
-    //     for (let i = 0; i < tokens.length; i++) {
-    //         sum = new Decimal(tokens[i].balance).times(rate[tokens[i].symbol]).plus(sum).toString()
-    //     }
-    //     setBalance(new Decimal(sum).toFixed(6))
-    // }, [rate, tokens])
+    useEffect(() => {
+        const tokens = networkMap[selectedWallet.chain as string][networkType].tokens
+        let sum = '0'
+        for (let i = 0; i < tokens.length; i++) {
+            sum = new Decimal(tokens[i].balance).times(rate[tokens[i].symbol]).plus(sum).toString()
+        }
+        setBalance(new Decimal(sum).toFixed(6))
+    }, [networkMap, selectedWallet, networkType])
 
     const Tokens = () => (
         <>
@@ -143,14 +104,14 @@ function Home() {
                     <Text 
                         style={{
                             ...tailwind(`text-blue-600 text-xs`),
-                            color: networkMap[selectedWallet.chain as string][networkType].color
+                            color: networkMap[selectedWallet?.chain as string][networkType].color
                         }}>
-                        {networkMap[selectedWallet.chain as string][networkType].name}
+                        {networkMap[selectedWallet?.chain as string][networkType].name}
                     </Text>
                     <Icon 
                         name="chevron-down" 
                         size={16} 
-                        color={networkMap[selectedWallet.chain as string][networkType].color} 
+                        color={networkMap[selectedWallet?.chain as string][networkType].color} 
                     />
                 </Pressable>
                 <ScrollView
@@ -167,14 +128,14 @@ function Home() {
                             style={tailwind(`flex justify-center items-center bg-white py-6 rounded-lg`)}>
                             <Pressable 
                                 onPress={() => {
-                                    Clipboard.setString(selectedWallet.address)
+                                    Clipboard.setString(selectedWallet?.address)
                                     Toast.show('复制成功', {
                                         position: Toast.positions.CENTER,
                                         shadow: false
                                     })
                                 }}>
                                 <Text style={tailwind(`text-blue-300`)}>
-                                    {hideAddress(selectedWallet.address)}
+                                    {hideAddress(selectedWallet?.address)}
                                 </Text>
                             </Pressable>
                             <Text style={tailwind(`text-blue-600 text-2xl font-bold`)}>

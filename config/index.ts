@@ -9,9 +9,6 @@ export const GOERLI = 'goerli'
 export const RPC = 'rpc'
 export const NO_RPC_BLOCK_EXPLORER = 'NO_BLOCK_EXPLORER'
 
-// export interface Token {
-
-// }
 export type Network = {
 	name: string,
 	shortName: string,
@@ -54,8 +51,9 @@ export const NETWORK_MAP: NetworkMap = {
 					logo: '',
 					symbol: 'USDT',
 					decimals: 6,
-					address: '',
-					balance: '0'
+					address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+					balance: '0',
+					type: 'ERC20'
 				}
 			]
 		},
@@ -125,16 +123,16 @@ export const NETWORK_MAP: NetworkMap = {
 				}
 			]
 		},
-		'goerly': {
+		'goerli': {
 			name: 'Goerli Test Network',
 			shortName: 'Goerli',
 			networkId: 5,
 			chainId: 5,
 			hexChainId: '0x5',
 			color: '#3099f2',
-			networkType: 'goerly',
+			networkType: 'goerli',
 			hdIndex: 60,
-			api: 'https://goerly.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
+			api: 'https://goerli.infura.io/v3/2f72de9c1fff4600ac7f64b8c47d8099',
 			scan: 'https://goerli.etherscan.io/',
 			tokens: [
 				{
@@ -173,8 +171,9 @@ export const NETWORK_MAP: NetworkMap = {
 					logo: '',
 					symbol: 'USDT',
 					decimals: 6,
-					address: '',
-					balance: '0'
+					address: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+					balance: '0',
+					type: 'TRC20'
 				}
 			]
 		},
