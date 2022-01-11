@@ -1,7 +1,4 @@
-/**
- * @format
- */
- import { Buffer } from "buffer"
+import { Buffer } from "buffer"
 import React from 'react';
 import {AppRegistry} from 'react-native'
 import { Provider } from 'react-redux'
