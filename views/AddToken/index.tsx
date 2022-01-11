@@ -35,7 +35,7 @@ function AddToken() {
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     style={tailwind(`w-14 flex justify-center items-center`)}>
-                    <Icon name="close" size={26} color={getColor('blue-600')} />
+                    <Icon name="close" size={26} color={getColor('purple-600')} />
                 </Pressable>
             </View>
             <View style={tailwind(`h-14 py-2 px-4 bg-white`)}>
@@ -82,7 +82,7 @@ function AddToken() {
                                 <Icon 
                                     name="add-circle-outline" 
                                     size={26} 
-                                    color={getColor('blue-600')} 
+                                    color={getColor('purple-600')} 
                                 />
                             }
                         </View>

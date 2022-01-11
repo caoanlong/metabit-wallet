@@ -22,17 +22,17 @@ function Wallets() {
         <View style={tailwind(`absolute top-0 left-0 right-0 bottom-0`)}>
             <HeaderBar 
                 title={'钱包管理'} 
-                backgroundColor={getColor('blue-600')} 
+                backgroundColor={getColor('purple-600')} 
                 color={'#ffffff'} 
             />
-            <View style={tailwind(`bg-blue-600 absolute z-0 top-0 left-0 right-0 h-1/3`)}></View>
+            <View style={tailwind(`bg-purple-600 absolute z-0 top-0 left-0 right-0 h-1/3`)}></View>
             <View 
                 style={{
                     ...tailwind(`relative h-full z-10`), 
                     paddingTop: defaultHeight
                 }}>
                 <ScrollView>
-                    <View style={tailwind(`flex items-center py-6 bg-blue-600`)}>
+                    <View style={tailwind(`flex items-center py-6 bg-purple-600`)}>
                         <Pressable 
                             onPress={() => {
                                 navigation.push('importWallet', {
@@ -41,7 +41,7 @@ function Wallets() {
                                 })
                             }}
                             style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
-                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用助记词导入HD钱包</Text>
+                            <Text style={tailwind(`text-purple-600 text-sm text-center`)}>使用助记词导入HD钱包</Text>
                         </Pressable>
                         <Pressable 
                             onPress={() => {
@@ -51,7 +51,7 @@ function Wallets() {
                                 })
                             }}
                             style={tailwind(`w-56 py-2 bg-white rounded-full mb-3`)}>
-                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>使用私钥导入币种钱包</Text>
+                            <Text style={tailwind(`text-purple-600 text-sm text-center`)}>使用私钥导入币种钱包</Text>
                         </Pressable>
                         <Pressable 
                             onPress={() => {
@@ -60,7 +60,7 @@ function Wallets() {
                                 })
                             }}
                             style={tailwind(`w-56 py-2 bg-white rounded-full`)}>
-                            <Text style={tailwind(`text-blue-600 text-sm text-center`)}>创建新钱包</Text>
+                            <Text style={tailwind(`text-purple-600 text-sm text-center`)}>创建新钱包</Text>
                         </Pressable>
                     </View>
                     <View style={tailwind(`bg-gray-100`)}>

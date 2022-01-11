@@ -19,6 +19,7 @@ import { ScreenStackHeaderConfig } from 'react-native-screens'
 import WalletInfo from './views/Wallets/WalletInfo'
 import DeriveWallet from './views/DeriveWallet'
 import HDWalletInfo from './views/Wallets/HDWalletInfo'
+import SelectWallet from './views/Wallets/SelectWallet'
 
 
 const Stack = createNativeStackNavigator()
@@ -186,6 +187,14 @@ const App = () => {
 					<Stack.Screen 
 						name="deriveWallet" 
 						component={DeriveWallet} 
+						options={{ 
+							presentation: 'modal',
+							headerShown: false
+						}} 
+					/>
+					<Stack.Screen 
+						name="selectWallet" 
+						component={SelectWallet} 
 						options={{ 
 							presentation: 'modal',
 							headerShown: false

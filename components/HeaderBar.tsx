@@ -8,13 +8,14 @@ import { useSafeAreaFrame, useSafeAreaInsets } from "react-native-safe-area-cont
 import { getDefaultHeaderHeight } from '@react-navigation/elements'
 
 interface HeaderBarProps {
-    title?: string,
+    title?: string | JSX.Element,
     backgroundColor?: string
     color?: string,
+    left?: string | JSX.Element,
     right?: string | JSX.Element
 }
 
-function HeaderBar({ title, backgroundColor = '#ffffff', color = '#000000', right }: HeaderBarProps) {
+function HeaderBar({ title = '', backgroundColor = '#ffffff', color = '#000000', left, right }: HeaderBarProps) {
     const isDarkMode = useColorScheme() === 'dark'
     const frame = useSafeAreaFrame()
     const insets = useSafeAreaInsets()
@@ -31,24 +32,32 @@ function HeaderBar({ title, backgroundColor = '#ffffff', color = '#000000', righ
             />
             <View 
                 style={{
-                    ...tailwind(`absolute z-20 left-0 right-0 top-0 flex flex-row bg-blue-600`),
+                    ...tailwind(`absolute z-20 left-0 right-0 top-0 flex flex-row bg-purple-600`),
                     backgroundColor,
                     height: defaultHeight,
                     paddingTop: insets.top
                 }}>
-                <Pressable 
-                    onPress={() => navigation.goBack()}
-                    style={tailwind(`w-12 flex justify-center items-center`)}>
-                    <Icon name="chevron-back" size={24} color={color} />
-                </Pressable>
+                <View style={tailwind(`w-12`)}>
+                    {
+                        left ? left : 
+                        <Pressable 
+                            onPress={() => navigation.goBack()}
+                            style={tailwind(`w-full h-full flex justify-center items-center`)}>
+                            <Icon name="chevron-back" size={24} color={color} />
+                        </Pressable>
+                    }
+                </View>
                 <View style={tailwind(`flex-1 flex justify-center`)}>
-                    <Text 
-                        style={{
-                            ...tailwind(`text-base text-center`),
-                            color
-                        }}>
-                        {title}
-                    </Text>
+                    {
+                        typeof title === 'string' ? 
+                        <Text 
+                            style={{
+                                ...tailwind(`text-base text-center`),
+                                color
+                            }}>
+                            {title}
+                        </Text> : title
+                    }
                 </View>
                 <View style={tailwind(`w-12`)}>
                     {

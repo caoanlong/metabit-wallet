@@ -1,5 +1,4 @@
 import Decimal from 'decimal.js-light'
-import { Buffer } from 'buffer'
 import { createHDWallet, deriveWallet } from './wallet'
 import { store } from '../store'
 

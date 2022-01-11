@@ -27,7 +27,7 @@ function ImportWallet() {
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     style={tailwind(`w-12 flex justify-center items-center`)}>
-                    <Icon name="chevron-back" size={24} color={getColor('blue-600')} />
+                    <Icon name="chevron-back" size={24} color={getColor('purple-600')} />
                 </Pressable>
                 <View style={tailwind(`flex-1 flex justify-center`)}>
                     <Text style={tailwind(`text-base text-center text-black`)}>
@@ -40,7 +40,7 @@ function ImportWallet() {
                         setText(txt)
                     }}
                     style={tailwind(`w-12 flex items-center justify-center`)}>
-                    <Text style={tailwind(`text-blue-600`)}>粘贴</Text>
+                    <Text style={tailwind(`text-purple-600`)}>粘贴</Text>
                 </Pressable>
             </View>
             <View style={tailwind(`h-full bg-white p-4`)}>
@@ -111,7 +111,7 @@ function ImportWallet() {
                             }, 1500)
                         }
                     }}
-                    style={tailwind(`mt-8 py-3 rounded-full mb-16 ${!text.trim() ? 'bg-blue-200' : 'bg-blue-600'}`)}>
+                    style={tailwind(`mt-8 py-3 rounded-full mb-16 ${!text.trim() ? 'bg-purple-200' : 'bg-purple-600'}`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>导入</Text>
                 </Pressable>
             </View>

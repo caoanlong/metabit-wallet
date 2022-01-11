@@ -1,5 +1,7 @@
 import { Contract, ethers, Wallet } from "ethers"
+import TronWeb from 'tronweb'
 import { Dispatch, AnyAction } from "redux"
+import axios from 'axios'
 import { Network, NetworkMap } from "../../config"
 import ABI from "../../config/ABI"
 import { createWalletByMnemonic } from "../../utils"
@@ -142,7 +144,7 @@ export const setNetworkType = (type: string) => {
     }
 }
 
-export const getBalance = (w: HDWallet) => {
+export const getBalance = (w: HDWallet, cb?: () => void) => {
     return async (dispatch: Dispatch<AnyAction>, getState: any) => {
         const networkMap: NetworkMap = getState().wallet.networkMap
         const networkType: string = getState().wallet.networkType
@@ -152,6 +154,7 @@ export const getBalance = (w: HDWallet) => {
             const wallet = new Wallet(w.privateKey, provider)
             const res = await wallet.getBalance()
             const balance = ethers.utils.formatEther(res)
+            console.log(balance)
             network.tokens[0].balance = balance
             const tokens = network.tokens.filter((item: Token) => item.address)
             if (tokens.length > 0) {
@@ -160,15 +163,35 @@ export const getBalance = (w: HDWallet) => {
                 const result = await Promise.all([...handlers])
                 for (let i = 1; i < network.tokens.length; i++) {
                     network.tokens[i].balance = String(+ethers.utils.formatUnits(result[i-1], 'wei') / Math.pow(10, network.tokens[i].decimals ?? 6))
+                    console.log(network.tokens[i].balance)
                 }
             }
-            
-            dispatch({
-                type: SET_TOKEN,
-                payload: network.tokens
-            })
         } else if (w.chain === 'Tron') {
-            return '0'
+            const privateKey = w.privateKey.replace(/^(0x)/, '')
+            const headers = { "TRON-PRO-API-KEY": 'dd9ff6b3-e5d3-4ea8-a6a2-780513e1ad48' }
+            const tronWeb = new TronWeb({ fullHost: network.api, privateKey, headers })
+            const res = await tronWeb.trx.getBalance(w.address)
+            const balance = tronWeb.fromSun(res)
+            console.log(balance)
+            network.tokens[0].balance = balance
+            const tokens = network.tokens.filter((item: Token) => item.address)
+            if (tokens.length > 0) {
+                const results: string[] = []
+                for (let i = 0; i < tokens.length; i++) {
+                    const contract = await tronWeb.contract(ABI[tokens[i].type as string], tokens[i].address)
+                    const result = await contract.balanceOf(w.address).call()
+                    results.push(tronWeb.fromSun(result.toString()))
+                }
+                for (let i = 1; i < network.tokens.length; i++) {
+                    network.tokens[i].balance = results[i-1]
+                    console.log(network.tokens[i].balance)
+                }
+            }
         }
+        dispatch({
+            type: SET_TOKEN,
+            payload: network.tokens
+        })
+        cb && cb()
     }
 }

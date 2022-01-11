@@ -22,7 +22,7 @@ function DeriveWallet() {
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     style={tailwind(`w-12 flex justify-center items-center`)}>
-                    <Icon name="chevron-back" size={24} color={getColor('blue-600')} />
+                    <Icon name="chevron-back" size={24} color={getColor('purple-600')} />
                 </Pressable>
                 <View style={tailwind(`flex-1 flex justify-center`)}>
                     <Text style={tailwind(`text-base text-center text-black`)}>
@@ -60,7 +60,7 @@ function DeriveWallet() {
                             Alert.alert(JSON.stringify(error))
                         }
                     }}
-                    style={tailwind(`mt-8 py-3 rounded-full mb-16 bg-blue-600`)}>
+                    style={tailwind(`mt-8 py-3 rounded-full mb-16 bg-purple-600`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>确定</Text>
                 </Pressable>
             </View>

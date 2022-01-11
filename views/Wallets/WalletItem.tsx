@@ -74,7 +74,7 @@ function WalletItem({ wallet }: WalletItemProps) {
                 <Icon 
                     name="chevron-forward" 
                     size={20}
-                    color={getColor('blue-600')}
+                    color={getColor('purple-600')}
                 />
             </Pressable>
         </View>

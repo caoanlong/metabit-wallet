@@ -36,7 +36,7 @@ function ConfirmMnemonic() {
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     style={tailwind(`w-12 flex justify-center items-center`)}>
-                    <Icon name="chevron-back" size={24} color={getColor('blue-600')} />
+                    <Icon name="chevron-back" size={24} color={getColor('purple-600')} />
                 </Pressable>
                 <View style={tailwind(`flex-1 flex justify-center`)}>
                     <Text style={tailwind(`text-base text-center text-white`)}>钱包</Text>
@@ -58,7 +58,7 @@ function ConfirmMnemonic() {
                             <View 
                                 key={i}
                                 style={{ 
-                                    ...tailwind(`flex flex-row px-3 py-2 rounded-full border-blue-500 border-dashed mr-3 ${i < 2 ? '' : 'mt-3'}`), 
+                                    ...tailwind(`flex flex-row px-3 py-2 rounded-full border-purple-500 border-dashed mr-3 ${i < 2 ? '' : 'mt-3'}`), 
                                     borderWidth: 0.5,
                                     width: '45%',
                                     marginRight: (i+1) % 2 ? '10%' : 0
@@ -85,7 +85,7 @@ function ConfirmMnemonic() {
                                 key={item}
                                 onPress={() => handleSelect(item)}
                                 style={{ 
-                                    ...tailwind(`rounded-full border-blue-500 ${i < 3 ? '' : 'mt-3'}`), 
+                                    ...tailwind(`rounded-full border-purple-500 ${i < 3 ? '' : 'mt-3'}`), 
                                     borderWidth: 0.5,
                                     width: '30%',
                                     marginLeft: (i-1) % 3 ? 0 : '5%',
@@ -114,7 +114,7 @@ function ConfirmMnemonic() {
                             console.log(error)
                         }
                     }}
-                    style={tailwind(`py-3 rounded-full ${selected.join('') !== mnemonic.join('') ? 'bg-blue-200' : 'bg-blue-600'}`)}>
+                    style={tailwind(`py-3 rounded-full ${selected.join('') !== mnemonic.join('') ? 'bg-purple-200' : 'bg-purple-600'}`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>完成</Text>
                 </Pressable>
             </View>

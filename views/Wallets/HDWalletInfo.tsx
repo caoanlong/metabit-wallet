@@ -41,7 +41,7 @@ function HDWalletInfo() {
             <View style={tailwind(`absolute top-0 left-0 right-0 bottom-0`)}>
                 <HeaderBar 
                     title={'HD钱包详情'} 
-                    backgroundColor={getColor('blue-600')} 
+                    backgroundColor={getColor('purple-600')} 
                     color={'#ffffff'}
                     right={
                         children.map((item: HDWallet) => item.id).includes(selectedWallet.id) ? <></> : 
@@ -72,14 +72,14 @@ function HDWalletInfo() {
                         </Pressable>
                     }
                 />
-                <View style={tailwind(`bg-blue-600 absolute z-0 top-0 left-0 right-0 h-1/3`)}></View>
+                <View style={tailwind(`bg-purple-600 absolute z-0 top-0 left-0 right-0 h-1/3`)}></View>
                 <View 
                     style={{
                         ...tailwind(`relative h-full z-10`), 
                         paddingTop: defaultHeight
                     }}>
                     <ScrollView>
-                        <View style={tailwind(`flex items-center py-10 bg-blue-600`)}>
+                        <View style={tailwind(`flex items-center py-10 bg-purple-600`)}>
                             {
                                 hdWallet.address ? <></> : 
                                 <Pressable 
@@ -88,7 +88,7 @@ function HDWalletInfo() {
                                         navigation.push('deriveWallet', params)
                                     }}
                                     style={tailwind(`w-56 py-2 bg-white rounded-full`)}>
-                                    <Text style={tailwind(`text-blue-600 text-sm text-center`)}>派生币种钱包</Text>
+                                    <Text style={tailwind(`text-purple-600 text-sm text-center`)}>派生币种钱包</Text>
                                 </Pressable>
                             }
                         </View>
@@ -111,7 +111,7 @@ function HDWalletInfo() {
                                     <Icon 
                                         name="create-outline" 
                                         size={20}
-                                        color={getColor('blue-600')}
+                                        color={getColor('purple-600')}
                                     />
                                 </Pressable>
                             </View>
@@ -133,7 +133,7 @@ function HDWalletInfo() {
                                                 onPress={() => {
                                                     setShowMnemonic(true)
                                                 }}
-                                                style={tailwind(`w-32 h-10 bg-blue-600 rounded-full flex items-center justify-center`)}>
+                                                style={tailwind(`w-32 h-10 bg-purple-600 rounded-full flex items-center justify-center`)}>
                                                 <Text style={tailwind(`text-white text-sm text-center`)}>查看助记词</Text>
                                             </Pressable>
                                         </View>
@@ -214,8 +214,8 @@ function HDWalletInfo() {
                             onPress={() => {
                                 setShowEditAliasModal(false)
                             }}
-                            style={tailwind(`flex-1 py-2 border border-blue-600 rounded-full mr-4`)}>
-                            <Text style={tailwind(`text-blue-600 text-lg text-center`)}>取消</Text>
+                            style={tailwind(`flex-1 py-2 border border-purple-600 rounded-full mr-4`)}>
+                            <Text style={tailwind(`text-purple-600 text-lg text-center`)}>取消</Text>
                         </Pressable>
                         <Pressable 
                             onPress={() => {
@@ -226,7 +226,7 @@ function HDWalletInfo() {
                                 })
                                 setShowEditAliasModal(false)
                             }}
-                            style={tailwind(`flex-1 py-2 border border-blue-600 bg-blue-600 rounded-full`)}>
+                            style={tailwind(`flex-1 py-2 border border-purple-600 bg-purple-600 rounded-full`)}>
                             <Text style={tailwind(`text-white text-lg text-center`)}>确定</Text>
                         </Pressable>
                     </View>

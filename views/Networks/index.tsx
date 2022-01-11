@@ -30,7 +30,7 @@ function Networks() {
                 <Pressable 
                     onPress={() => navigation.goBack()}
                     style={tailwind(`w-14 flex justify-center items-center`)}>
-                    <Icon name="close" size={26} color={getColor('blue-600')} />
+                    <Icon name="close" size={26} color={getColor('purple-600')} />
                 </Pressable>
             </View>
             <View style={tailwind(`p-4`)}>
@@ -46,11 +46,12 @@ function Networks() {
                             <Text style={tailwind(`flex-1 text-base`)}>
                                 {item.name}
                             </Text>
-                            <View style={tailwind(`w-8 flex items-center justify-center`)}>
-                                {
-                                    networkType === item.networkType ?
-                                    <Icon name="checkmark" size={20} color={getColor('blue-600')} /> : <></>
-                                }
+                            <View style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
+                                <Icon 
+                                    name="checkmark-circle" 
+                                    size={20}
+                                    color={getColor(`${networkType === item.networkType ? 'green-600' : 'gray-200'}`)}
+                                />
                             </View>
                         </Pressable>
                     ))

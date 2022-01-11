@@ -13,7 +13,6 @@ function Mine() {
 
     return (
         <View style={tailwind(``)}>
-            
             <View style={tailwind(`mb-4`)}>
                 <Pressable 
                     onPress={() => navigation.push('wallets')}>
@@ -32,7 +31,7 @@ function Mine() {
                             <Icon 
                                 name="chevron-forward" 
                                 size={20}
-                                color={getColor('blue-600')}
+                                color={getColor('purple-600')}
                             />
                         </View>
                     </View>
@@ -54,7 +53,7 @@ function Mine() {
                             }
                         ])
                     }}
-                    style={tailwind(`py-3 bg-blue-600 rounded-full mb-16`)}>
+                    style={tailwind(`py-3 bg-purple-600 rounded-full mb-16`)}>
                     <Text style={tailwind(`text-white text-lg text-center`)}>退出登录</Text>
                 </Pressable>
             </View>

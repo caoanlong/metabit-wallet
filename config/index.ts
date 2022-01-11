@@ -156,7 +156,7 @@ export const NETWORK_MAP: NetworkMap = {
 			color: '#3cc29e',
 			networkType: 'mainnet',
 			hdIndex: 195,
-			api: '',
+			api: 'https://api.trongrid.io',
 			scan: 'https://tronscan.org/#/',
 			tokens: [
 				{

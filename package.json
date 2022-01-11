@@ -18,6 +18,7 @@
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "assert": "^2.0.0",
+    "axios": "^0.24.0",
     "bip32": "2.0.6",
     "bip39": "^3.0.4",
     "bn.js": "^5.2.0",
@@ -31,6 +32,7 @@
     "events": "^3.3.0",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.30",
+    "querystring": "^0.2.1",
     "react": "17.0.2",
     "react-native": "0.66.2",
     "react-native-bip39": "^2.3.0",
@@ -55,7 +57,7 @@
     "sha3": "^2.1.4",
     "stream": "^0.0.2",
     "tailwind-rn": "^3.0.1",
-    "web3": "^1.6.0"
+    "tronweb": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
