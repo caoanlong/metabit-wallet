@@ -15,8 +15,8 @@ function Networks() {
     const dispatch = useDispatch()
     const networkType = useSelector((state: RootState) => state.wallet.networkType)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-    const networks = Object.keys(NETWORK_MAP[selectedWallet.chain as string]).map((item: string) => NETWORK_MAP[selectedWallet.chain as string][item])
-    
+    const networks = Object.keys(NETWORK_MAP).filter((item: string) => item.startsWith(selectedWallet.chain as string)).map((item: string) => NETWORK_MAP[item])
+
     return (
         <View>
             <StatusBar

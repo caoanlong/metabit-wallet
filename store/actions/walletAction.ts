@@ -144,14 +144,15 @@ export const setNetworkType = (type: string) => {
     }
 }
 
-export const getBalance = (w: HDWallet, cb?: () => void) => {
+export const getBalance = (cb?: () => void) => {
     return async (dispatch: Dispatch<AnyAction>, getState: any) => {
         const networkMap: NetworkMap = getState().wallet.networkMap
         const networkType: string = getState().wallet.networkType
-        const network: Network = networkMap[w.chain as string][networkType]
-        if (w.chain === 'Ethereum') {
+        const selectedWallet: HDWallet = getState().wallet.selectedWallet
+        const network: Network = networkMap[selectedWallet.chain + '_' + networkType]
+        if (selectedWallet.chain === 'Ethereum') {
             const provider = new ethers.providers.JsonRpcProvider(network.api)
-            const wallet = new Wallet(w.privateKey, provider)
+            const wallet = new Wallet(selectedWallet.privateKey, provider)
             const res = await wallet.getBalance()
             const balance = ethers.utils.formatEther(res)
             console.log(balance)
@@ -159,18 +160,18 @@ export const getBalance = (w: HDWallet, cb?: () => void) => {
             const tokens = network.tokens.filter((item: Token) => item.address)
             if (tokens.length > 0) {
                 const contracts: Contract[] = tokens.map((item: Token) => new Contract(item.address as string, ABI[item.type as string], provider))
-                const handlers = contracts.map((contract: Contract) => contract.balanceOf(w.address))
+                const handlers = contracts.map((contract: Contract) => contract.balanceOf(selectedWallet.address))
                 const result = await Promise.all([...handlers])
                 for (let i = 1; i < network.tokens.length; i++) {
                     network.tokens[i].balance = String(+ethers.utils.formatUnits(result[i-1], 'wei') / Math.pow(10, network.tokens[i].decimals ?? 6))
                     console.log(network.tokens[i].balance)
                 }
             }
-        } else if (w.chain === 'Tron') {
-            const privateKey = w.privateKey.replace(/^(0x)/, '')
+        } else if (selectedWallet.chain === 'Tron') {
+            const privateKey = selectedWallet.privateKey.replace(/^(0x)/, '')
             const headers = { "TRON-PRO-API-KEY": 'dd9ff6b3-e5d3-4ea8-a6a2-780513e1ad48' }
             const tronWeb = new TronWeb({ fullHost: network.api, privateKey, headers })
-            const res = await tronWeb.trx.getBalance(w.address)
+            const res = await tronWeb.trx.getBalance(selectedWallet.address)
             const balance = tronWeb.fromSun(res)
             console.log(balance)
             network.tokens[0].balance = balance
@@ -179,7 +180,7 @@ export const getBalance = (w: HDWallet, cb?: () => void) => {
                 const results: string[] = []
                 for (let i = 0; i < tokens.length; i++) {
                     const contract = await tronWeb.contract(ABI[tokens[i].type as string], tokens[i].address)
-                    const result = await contract.balanceOf(w.address).call()
+                    const result = await contract.balanceOf(selectedWallet.address).call()
                     results.push(tronWeb.fromSun(result.toString()))
                 }
                 for (let i = 1; i < network.tokens.length; i++) {
@@ -187,11 +188,10 @@ export const getBalance = (w: HDWallet, cb?: () => void) => {
                     console.log(network.tokens[i].balance)
                 }
             }
+            
         }
-        dispatch({
-            type: SET_TOKEN,
-            payload: network.tokens
-        })
+        networkMap[selectedWallet.chain + '_' + networkType] = network
+        dispatch({ type: SET_TOKEN, payload: networkMap })
         cb && cb()
     }
 }

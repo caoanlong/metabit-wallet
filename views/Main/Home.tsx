@@ -38,11 +38,11 @@ function Home() {
     const [ refreshing, setRefreshing ] = useState<boolean>(false)
 
     useEffect(() => {
-        dispatch(getBalance(selectedWallet))
+        dispatch(getBalance())
     }, [selectedWallet, networkType])
 
     useEffect(() => {
-        const tokens = networkMap[selectedWallet.chain as string][networkType].tokens
+        const tokens = networkMap[selectedWallet.chain + '_' + networkType].tokens
         let sum = '0'
         for (let i = 0; i < tokens.length; i++) {
             sum = new Decimal(tokens[i].balance).times(rate[tokens[i].symbol]).plus(sum).toString()
@@ -56,7 +56,15 @@ function Home() {
                 <HeaderBar 
                     backgroundColor={getColor('purple-600')} 
                     color={'#ffffff'}
-                    left={<></>}
+                    left={
+                        <Pressable 
+                            onPress={() => {
+                                navigation.push('addToken')
+                            }}
+                            style={tailwind(`w-full h-full flex items-center justify-center`)}>
+                            <Icon name="add" size={30} color={'#ffffff'} />
+                        </Pressable>
+                    }
                     title={
                         <Pressable 
                             onPress={() => {
@@ -64,15 +72,18 @@ function Home() {
                             }}
                             style={tailwind(`flex flex-row justify-center`)}>
                             <View 
-                                style={tailwind(`py-1 px-4 rounded-full flex flex-row bg-white`)}>
-                                <Text style={tailwind(`text-purple-600 text-center`)}>
+                                style={{
+                                    ...tailwind(`py-1 px-4 rounded-full flex flex-row`),
+                                    backgroundColor: 'rgba(0,0,0,0.1)'
+                                }}>
+                                <Text style={tailwind(`text-white text-center`)}>
                                     {selectedWallet.alias ?? (selectedWallet.name + ' ' + (selectedWallet.index + 1))}
                                 </Text>
                                 <Icon 
                                     style={tailwind('ml-1')}
                                     name="caret-down-outline" 
                                     size={16} 
-                                    color={getColor('purple-600')} 
+                                    color={'#ffffff'} 
                                 />
                             </View>
                         </Pressable>
@@ -97,7 +108,7 @@ function Home() {
                     }}>
                     <Text 
                         style={tailwind(`text-white text-xs`)}>
-                        {networkMap[selectedWallet?.chain as string][networkType].name}
+                        {networkMap[selectedWallet.chain + '_' + networkType].name}
                     </Text>
                     <Icon 
                         name="chevron-down" 
@@ -112,7 +123,6 @@ function Home() {
                         top: defaultHeight + 32
                     }}>
                     <ScrollView
-                        contentInsetAdjustmentBehavior="automatic"
                         refreshControl={
                             <RefreshControl 
                                 tintColor={'#ffffff'}
@@ -120,7 +130,7 @@ function Home() {
                                 refreshing={refreshing} 
                                 onRefresh={() => {
                                     setRefreshing(true)
-                                    dispatch(getBalance(selectedWallet, () => {
+                                    dispatch(getBalance(() => {
                                         setRefreshing(false)
                                     }))
                                 }} 
@@ -169,9 +179,13 @@ function Home() {
                                 </Pressable>
                             </View>
                         </View>
-                        <View style={tailwind(`p-3 bg-gray-100`)}>
+                        <View 
+                            style={{
+                                ...tailwind(`p-3 bg-gray-100`),
+                                minHeight: 300
+                            }}>
                             {
-                                networkMap[selectedWallet.chain as string][networkType].tokens.map((item: Token) => (
+                                networkMap[selectedWallet.chain + '_' + networkType].tokens.map((item: Token) => (
                                     <View 
                                         key={item.symbol} 
                                         style={{

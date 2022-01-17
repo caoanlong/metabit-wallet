@@ -53,7 +53,7 @@ const reducer = (state: WalletState = initState, action: AnyAction) => {
             }
             return { ...state, wallets: [...state.wallets] }
         case DEL_WALLET:
-            return { ...state, wallets: action.payload }
+            return { ...state, wallets: { ...action.payload } }
         case CLEAR_WALLET:
             return { ...initState }
         case ADD_TOKEN:
@@ -65,8 +65,7 @@ const reducer = (state: WalletState = initState, action: AnyAction) => {
         case RESET_NETWORK_TYPE:
             return { ...initState }
         case SET_TOKEN:
-            state.networkMap[state.selectedWallet?.chain as string][state.networkType].tokens = action.payload
-            return { ...state, networkMap: { ...state.networkMap } }
+            return { ...state, networkMap: { ...action.payload } }
         default:
             return state
     }

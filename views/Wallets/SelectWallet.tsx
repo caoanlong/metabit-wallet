@@ -84,6 +84,7 @@ function SelectWallet() {
                                         <Pressable 
                                             onPress={() => {
                                                 dispatch(changeWallet(item))
+                                                navigation.goBack()
                                             }}
                                             style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
                                             <Icon 

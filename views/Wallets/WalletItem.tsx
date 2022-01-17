@@ -5,9 +5,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import tailwind, { getColor } from "tailwind-rn"
 import Icon from "react-native-vector-icons/Ionicons"
 import { CHAIN_MAP } from "../../config"
-import { useDispatch, useSelector } from "react-redux"
-import { changeWallet } from "../../store/actions/walletAction"
-import { RootState } from "../../store"
 
 
 interface WalletItemProps {
@@ -15,11 +12,17 @@ interface WalletItemProps {
 }
 function WalletItem({ wallet }: WalletItemProps) {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const dispatch = useDispatch()
-    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
 
     return (
-        <View 
+        <Pressable 
+            onPress={() => {
+                const params: { id: string } = { id: wallet.id }
+                if (wallet.type === -1) {
+                    navigation.push('hdWalletInfo', params)
+                } else {
+                    navigation.push('walletInfo', params)
+                }
+            }}
             style={{
                 ...tailwind(`flex flex-row items-center py-4 bg-white mb-3 rounded-lg`),
                 shadowColor: '#000000',
@@ -47,37 +50,14 @@ function WalletItem({ wallet }: WalletItemProps) {
                     {wallet.alias ?? (wallet.name + ' ' + (wallet.index + 1))}
                 </Text>
             </View>
-            {
-                wallet.type === -1 ? <></> : 
-                <Pressable 
-                    onPress={() => {
-                        dispatch(changeWallet(wallet))
-                    }}
-                    style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
-                    <Icon 
-                        name="checkmark-circle" 
-                        size={20}
-                        color={getColor(`${selectedWallet.id === wallet.id ? 'green-600' : 'gray-200'}`)}
-                    />
-                </Pressable>
-            }
-            <Pressable 
-                onPress={() => {
-                    const params: { id: string } = { id: wallet.id }
-                    if (wallet.type === -1) {
-                        navigation.push('hdWalletInfo', params)
-                    } else {
-                        navigation.push('walletInfo', params)
-                    }
-                }}
-                style={tailwind(`w-10 h-8 flex justify-center items-center`)}>
+            <View style={tailwind(`w-10 h-8 flex justify-center items-center`)}>
                 <Icon 
                     name="chevron-forward" 
                     size={20}
                     color={getColor('purple-600')}
                 />
-            </Pressable>
-        </View>
+            </View>
+        </Pressable>
     )
 }
 
