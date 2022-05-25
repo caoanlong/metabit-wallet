@@ -30,24 +30,36 @@ interface HDWallet {
     parentId?: string
 }
 
-type Token = {
+interface ContractToken {
+    id: number,
     name: string,
-    logo: any,
     symbol: string,
-    decimals?: number,
-    address?: string,
-    balance: string,
-    type?: string
+    icon: string,
+    decimals: number,
+    address: string,
+    balance: number,
+    chainType: string,
+    network: string,
+    createTime: Date,
+    updateTime: Date
 }
-type AddressTokens = {
-    [symbol: string]: Token
+
+interface Network {
+    id: number,
+    name: string,
+    shortName: string,
+    type: string,
+    hdIndex: number,
+    isTest: false,
+    apiUrl: string,
+    scanUrl: string,
+    createTime: Date,
+    updateTime: Date
 }
-type TokenMap = {
-    [address: string]: AddressTokens
-}
+
 declare module "@metamask/contract-metadata" {
     interface contractMap {
-        [address: string]: Token
+        [address: string]: ContractToken
     }
 }
 

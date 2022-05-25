@@ -5,7 +5,6 @@ import { ParamListBase, useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import Icon from 'react-native-vector-icons/Ionicons'
 import tailwind, { getColor } from "tailwind-rn"
-import { Network, NETWORK_MAP } from "../../config"
 import { RootState } from "../../store"
 import { setNetworkType } from "../../store/actions/walletAction"
 
@@ -13,9 +12,8 @@ function Networks() {
     const isDarkMode = useColorScheme() === 'dark'
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const dispatch = useDispatch()
-    const networkType = useSelector((state: RootState) => state.wallet.networkType)
-    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-    const networks = Object.keys(NETWORK_MAP).filter((item: string) => item.startsWith(selectedWallet.chain as string)).map((item: string) => NETWORK_MAP[item])
+    const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
+    const networks: Network[] = useSelector((state: RootState) => state.wallet.networks)
 
     return (
         <View>
@@ -39,7 +37,7 @@ function Networks() {
                         <Pressable 
                             key={item.name} 
                             onPress={() => {
-                                dispatch(setNetworkType(item.networkType))
+                                dispatch(setNetworkType(item))
                                 navigation.goBack()
                             }}
                             style={tailwind(`flex flex-row bg-white p-4 rounded-md ${i === 0 ? '' : 'mt-3'}`)}>
@@ -50,7 +48,7 @@ function Networks() {
                                 <Icon 
                                     name="checkmark-circle" 
                                     size={20}
-                                    color={getColor(`${networkType === item.networkType ? 'green-600' : 'gray-200'}`)}
+                                    color={getColor(`${selectedNetwork.name === item.name ? 'green-600' : 'gray-200'}`)}
                                 />
                             </View>
                         </Pressable>

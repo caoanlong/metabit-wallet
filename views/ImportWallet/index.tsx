@@ -94,7 +94,6 @@ function ImportWallet() {
                                 dispatch(createWallet(mnemonic, isSelect))
                             } else if (type === 'privateKey') {
                                 const privateKey = text.trim()
-                                
                                 dispatch(importWalletByPrivateKey(privateKey, chain, isSelect))
                             }
                             if (action && action === 'back') {

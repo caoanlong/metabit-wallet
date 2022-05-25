@@ -20,6 +20,7 @@ import WalletInfo from './views/Wallets/WalletInfo'
 import DeriveWallet from './views/DeriveWallet'
 import HDWalletInfo from './views/Wallets/HDWalletInfo'
 import SelectWallet from './views/Wallets/SelectWallet'
+import { getNetworks, getTokens } from './store/actions/walletAction'
 
 
 const Stack = createNativeStackNavigator()
@@ -33,6 +34,11 @@ const App = () => {
     }
 	const dispatch = useDispatch()
 	const wallets = useSelector((state: RootState) => state.wallet.wallets)
+
+	useEffect(() => {
+		dispatch(getNetworks())
+		dispatch(getTokens())
+	}, [])
 	/**
 	 * tennis diagram coyote place depth kind pill end inmate flight gasp nothing
 	 * fly perfect repeat demise basket fame pipe define toast witness swear mandate

@@ -20,7 +20,7 @@ import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootState } from "../../store"
 import { hideAddress } from "../../utils"
-import { CHAIN_MAP, NetworkMap } from "../../config"
+import { CHAIN_MAP, STATIC_URL } from "../../config"
 import { getBalance } from "../../store/actions/walletAction"
 import HeaderBar from "../../components/HeaderBar"
 
@@ -30,25 +30,26 @@ function Home() {
     const defaultHeight = getDefaultHeaderHeight(frame, false, insets.top)
     const dispatch = useDispatch()
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const networkType: string = useSelector((state: RootState) => state.wallet.networkType)
-    const networkMap: NetworkMap = useSelector((state: RootState) => state.wallet.networkMap)
+    const networks: Network[] = useSelector((state: RootState) => state.wallet.networks)
+    const tokens: ContractToken[] = useSelector((state: RootState) => state.wallet.tokens)
+    const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
     const rate: any = useSelector((state: RootState) => state.rate)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
     const [ balance, setBalance ] = useState<string>('0.0')
     const [ refreshing, setRefreshing ] = useState<boolean>(false)
 
-    useEffect(() => {
-        dispatch(getBalance())
-    }, [selectedWallet, networkType])
+    // useEffect(() => {
+    //     dispatch(getBalance())
+    // }, [selectedWallet, networkType])
 
-    useEffect(() => {
-        const tokens = networkMap[selectedWallet.chain + '_' + networkType].tokens
-        let sum = '0'
-        for (let i = 0; i < tokens.length; i++) {
-            sum = new Decimal(tokens[i].balance).times(rate[tokens[i].symbol]).plus(sum).toString()
-        }
-        setBalance(new Decimal(sum).toFixed(6))
-    }, [networkMap, selectedWallet, networkType])
+    // useEffect(() => {
+    //     const tokens = networkMap[selectedWallet.chain + '_' + networkType].tokens
+    //     let sum = '0'
+    //     for (let i = 0; i < tokens.length; i++) {
+    //         sum = new Decimal(tokens[i].balance).times(rate[tokens[i].symbol]).plus(sum).toString()
+    //     }
+    //     setBalance(new Decimal(sum).toFixed(6))
+    // }, [networkMap, selectedWallet, networkType])
     
     return (
         <>
@@ -108,7 +109,7 @@ function Home() {
                     }}>
                     <Text 
                         style={tailwind(`text-white text-xs`)}>
-                        {networkMap[selectedWallet.chain + '_' + networkType].name}
+                        {selectedNetwork.name}
                     </Text>
                     <Icon 
                         name="chevron-down" 
@@ -185,7 +186,7 @@ function Home() {
                                 minHeight: 300
                             }}>
                             {
-                                networkMap[selectedWallet.chain + '_' + networkType].tokens.map((item: Token) => (
+                                tokens.map((item: ContractToken) => (
                                     <View 
                                         key={item.symbol} 
                                         style={{
@@ -200,7 +201,7 @@ function Home() {
                                         }}>
                                         <Image
                                             style={tailwind(`w-10 h-10 mr-4 rounded-full bg-gray-200`)}
-                                            source={CHAIN_MAP[item.symbol]}
+                                            source={{ uri: STATIC_URL + item.icon }}
                                         />
                                         <Text style={tailwind(`text-black text-xl`)}>{item.symbol}</Text>
                                         <View style={tailwind(`flex-1`)}>

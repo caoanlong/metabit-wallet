@@ -1,5 +1,4 @@
 import { AnyAction } from "redux"
-import { NetworkMap, NETWORK_MAP } from "../../config"
 import { 
     ADD_CHILD_WALLET, 
     CREATE_WALLET, 
@@ -7,27 +6,26 @@ import {
     CLEAR_WALLET,  
     CHANGE_WALLET,
     SET_WALLET,
-    ADD_TOKEN,
-    DEL_TOKEN,
-    SET_NETWORK_TYPE,
+    SET_NETWORK,
+    SET_SELECTED_NETWORK,
     RESET_NETWORK_TYPE,
     SET_TOKEN
 } from "../constants"
 
 export interface WalletState {
     wallets: HDWallet[],
-    selectedWallet: HDWallet | undefined,
-    networkType: string,
-    networkMap: NetworkMap,
-    tokenMap: TokenMap
+    selectedWallet: HDWallet,
+    selectedNetwork: Network,
+    networks: Network[],
+    tokens: ContractToken[]
 }
 
 const initState: WalletState = {
     wallets: [],
-    selectedWallet: undefined,
-    networkType: 'mainnet',
-    networkMap: { ...NETWORK_MAP },
-    tokenMap: {}
+    selectedWallet: {} as HDWallet,
+    selectedNetwork: {} as Network,
+    networks: [],
+    tokens: []
 }
 
 const reducer = (state: WalletState = initState, action: AnyAction) => {
@@ -56,16 +54,14 @@ const reducer = (state: WalletState = initState, action: AnyAction) => {
             return { ...state, wallets: { ...action.payload } }
         case CLEAR_WALLET:
             return { ...initState }
-        case ADD_TOKEN:
-            return { ...state, tokenMap: action.payload }
-        case DEL_TOKEN:
-            return { ...state, tokenMap: action.payload }
-        case SET_NETWORK_TYPE:
-            return { ...state, networkType: action.payload }
+        case SET_TOKEN:
+            return { ...state, tokens: [...action.payload] }
+        case SET_NETWORK:
+            return { ...state, networks: [...action.payload] }
+        case SET_SELECTED_NETWORK:
+            return { ...state, selectedNetwork: action.payload }
         case RESET_NETWORK_TYPE:
             return { ...initState }
-        case SET_TOKEN:
-            return { ...state, networkMap: { ...action.payload } }
         default:
             return state
     }

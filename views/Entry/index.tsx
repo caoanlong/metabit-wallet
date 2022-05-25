@@ -2,14 +2,11 @@ import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import React from "react"
 import { Pressable, Text, View } from "react-native"
-import { useSelector } from "react-redux"
 import tailwind from "tailwind-rn"
 import { displayName as appName } from '../../app.json'
-import { RootState } from "../../store"
 
 function Entry() {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const wallets = useSelector((state: RootState) => state.wallet.wallets)
 
     return (
         <View style={tailwind(`h-full bg-white flex justify-around`)}>
