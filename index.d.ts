@@ -40,6 +40,7 @@ interface ContractToken {
     balance: number,
     chainType: string,
     network: string,
+    isSelect: boolean,
     createTime: Date,
     updateTime: Date
 }

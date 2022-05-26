@@ -4,19 +4,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ParamListBase, useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import Icon from 'react-native-vector-icons/Ionicons'
-import CONTRACT_MAP from '../../config/CONTRACT_MAP'
 import tailwind, { getColor } from "tailwind-rn"
-import { addToken } from "../../store/actions/walletAction"
+import { addToken, getBalance, setToken } from "../../store/actions/walletAction"
 import { RootState } from "../../store"
-import { CHAIN_MAP } from "../../config"
+import { CHAIN_MAP, STATIC_URL } from "../../config"
 function AddToken() {
     const isDarkMode = useColorScheme() === 'dark'
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const dispatch = useDispatch()
-    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-    const networkType: string = useSelector((state: RootState) => state.wallet.networkType)
-    const list = CONTRACT_MAP[selectedWallet.chain + '_' + networkType]
-    const [ tokens, setTokens ] = useState<Token[]>([...list])
+    const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
+    const tokens: ContractToken[] = useSelector((state: RootState) => {
+        return state.wallet.tokens.filter((item: ContractToken) => item.network === selectedNetwork.shortName)
+    })
 
     return (
         <View style={tailwind(`absolute top-0 left-0 right-0 bottom-0`)}>
@@ -45,8 +44,7 @@ function AddToken() {
                     keyboardType={'web-search'}
                     style={tailwind(`h-10 px-4 rounded-full bg-gray-200`)}
                     onChangeText={(text) => {
-                        const t = list.filter(item => item.symbol.toLocaleUpperCase().includes(text.toLocaleUpperCase()))
-                        setTokens(t)
+
                     }}
                 />
             </View>
@@ -60,7 +58,7 @@ function AddToken() {
                         tokens.length ? 
                         <View style={tailwind(`p-3`)}>
                             {
-                                tokens.map((item: Token) => (
+                                tokens.map((item: ContractToken) => (
                                     <View 
                                         key={item.address} 
                                         style={{
@@ -76,23 +74,35 @@ function AddToken() {
                                         <View style={tailwind(`w-14 flex items-center`)}>
                                             <Image 
                                                 style={tailwind(`w-8 h-8 bg-gray-200 rounded-full`)} 
-                                                source={CHAIN_MAP[item.symbol]} 
+                                                source={{ uri: STATIC_URL + item.icon }} 
                                             />
                                         </View>
                                         <View style={tailwind(`flex-1`)}>
                                             <Text style={tailwind(`text-base`)}>{item.name}</Text>
-                                            <Text style={tailwind(``)}>{item.symbol}</Text>
+                                            <Text style={tailwind(`text-gray-400`)}>{item.symbol}</Text>
                                         </View>
                                         <Pressable 
                                             onPress={() => {
-                                                
+                                                if (item.isSelect) return
+                                                dispatch(setToken(item))
+                                                setTimeout(() => {
+                                                    dispatch(getBalance())
+                                                }, 50)
                                             }}
-                                            style={tailwind(`w-8 h-8 flex justify-center items-center`)}>
-                                            {/* <Icon 
-                                                name="checkmark-circle" 
-                                                size={20}
-                                                color={getColor(`${selectedWallet.id === item.id ? 'green-600' : 'gray-200'}`)}
-                                            /> */}
+                                            style={tailwind(`w-12 h-8 flex justify-center items-center`)}>
+                                                {
+                                                    item.isSelect ?
+                                                    <Icon 
+                                                        name="checkmark-circle-outline" 
+                                                        size={26} 
+                                                        color={getColor('gray-400')} 
+                                                    /> :
+                                                    <Icon 
+                                                        name="add-circle-outline" 
+                                                        size={26} 
+                                                        color={getColor('purple-600')} 
+                                                    />
+                                                }
                                         </Pressable>
                                     </View>
                                 ))

@@ -20,7 +20,7 @@ import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootState } from "../../store"
 import { hideAddress } from "../../utils"
-import { CHAIN_MAP, STATIC_URL } from "../../config"
+import { STATIC_URL } from "../../config"
 import { getBalance } from "../../store/actions/walletAction"
 import HeaderBar from "../../components/HeaderBar"
 
@@ -30,26 +30,30 @@ function Home() {
     const defaultHeight = getDefaultHeaderHeight(frame, false, insets.top)
     const dispatch = useDispatch()
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
-    const networks: Network[] = useSelector((state: RootState) => state.wallet.networks)
-    const tokens: ContractToken[] = useSelector((state: RootState) => state.wallet.tokens)
-    const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
     const rate: any = useSelector((state: RootState) => state.rate)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
-    const [ balance, setBalance ] = useState<string>('0.0')
+    const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
+    const tokens: ContractToken[] = useSelector((state: RootState) => {
+        return state.wallet.tokens.filter((item: ContractToken) => {
+            return item.isSelect && item.network === selectedNetwork.shortName
+        })
+    })
+    const totalBalance: number = useSelector((state: RootState) => {
+        const tokenList = state.wallet.tokens.filter((item: ContractToken) => {
+            return item.isSelect && item.network === selectedNetwork.shortName
+        })
+        let sum = 0
+        for (let i = 0; i < tokenList.length; i++) {
+            const item = tokenList[i]
+            sum = new Decimal(item.balance ?? '0').times(rate[item.symbol] ?? 1).plus(sum).toNumber()
+        }
+        return sum
+    })
     const [ refreshing, setRefreshing ] = useState<boolean>(false)
 
-    // useEffect(() => {
-    //     dispatch(getBalance())
-    // }, [selectedWallet, networkType])
-
-    // useEffect(() => {
-    //     const tokens = networkMap[selectedWallet.chain + '_' + networkType].tokens
-    //     let sum = '0'
-    //     for (let i = 0; i < tokens.length; i++) {
-    //         sum = new Decimal(tokens[i].balance).times(rate[tokens[i].symbol]).plus(sum).toString()
-    //     }
-    //     setBalance(new Decimal(sum).toFixed(6))
-    // }, [networkMap, selectedWallet, networkType])
+    useEffect(() => {
+        dispatch(getBalance())
+    }, [selectedNetwork, selectedWallet])
     
     return (
         <>
@@ -140,20 +144,23 @@ function Home() {
                         <View style={tailwind(`bg-purple-600 p-3`)}>
                             <View 
                                 style={tailwind(`flex justify-center items-center py-4`)}>
-                                <Pressable 
-                                    onPress={() => {
-                                        Clipboard.setString(selectedWallet?.address)
-                                        Toast.show('复制成功', {
-                                            position: Toast.positions.CENTER,
-                                            shadow: false
-                                        })
-                                    }}>
-                                    <Text style={tailwind(`text-purple-300 text-base`)}>
-                                        {hideAddress(selectedWallet?.address)}
-                                    </Text>
-                                </Pressable>
+                                {
+                                    selectedWallet && selectedWallet.address ?
+                                    <Pressable 
+                                        onPress={() => {
+                                            Clipboard.setString(selectedWallet.address)
+                                            Toast.show('复制成功', {
+                                                position: Toast.positions.CENTER,
+                                                shadow: false
+                                            })
+                                        }}>
+                                        <Text style={tailwind(`text-purple-300 text-base`)}>
+                                            {hideAddress(selectedWallet.address)}
+                                        </Text>
+                                    </Pressable> : <></>
+                                }
                                 <Text style={tailwind(`text-white text-3xl font-bold`)}>
-                                    ${parseFloat(balance)}
+                                    ${totalBalance ? new Decimal(totalBalance).toFixed(8).toString() : '0.00'}
                                 </Text>
                             </View>
                             <View 
@@ -206,10 +213,10 @@ function Home() {
                                         <Text style={tailwind(`text-black text-xl`)}>{item.symbol}</Text>
                                         <View style={tailwind(`flex-1`)}>
                                             <Text style={tailwind(`text-right text-black text-xl`)}>
-                                                {item.balance ? parseFloat(new Decimal(item.balance).toFixed(6)) : ''}
+                                                {parseFloat(new Decimal(item.balance ?? '0').toFixed(8))}
                                             </Text>
                                             <Text style={tailwind(`text-right text-gray-400`)}>
-                                                ${item.balance ? parseFloat(new Decimal(item.balance).times(rate[item.symbol]).toFixed(6)) : ''}
+                                                ${parseFloat(new Decimal(item.balance ?? '0').times(rate[item.symbol] ?? 1).toFixed(8))}
                                             </Text>
                                         </View>
                                     </View>

@@ -13,7 +13,10 @@ function Networks() {
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>()
     const dispatch = useDispatch()
     const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
-    const networks: Network[] = useSelector((state: RootState) => state.wallet.networks)
+    const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
+    const networks: Network[] = useSelector((state: RootState) => {
+        return state.wallet.networks.filter((item: Network) => item.hdIndex === selectedWallet.type)
+    })
 
     return (
         <View>
