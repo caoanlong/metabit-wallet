@@ -129,6 +129,44 @@ function WalletInfo() {
                                     borderColor: '#ddd',
                                     borderBottomWidth: 0.5
                                 }}>
+                                <Pressable 
+                                    onPress={() => {
+                                        Clipboard.setString(wallet.publicKey)
+                                        Toast.show('复制成功', {
+                                            position: Toast.positions.CENTER,
+                                            shadow: false
+                                        })
+                                    }}>
+                                    <Text style={tailwind(`text-base`)}>
+                                        {wallet.publicKey}
+                                    </Text>
+                                </Pressable>
+                            </View>
+                            <View
+                                style={{
+                                    ...tailwind(`relative bg-white py-3 px-3`),
+                                    borderColor: '#ddd',
+                                    borderBottomWidth: 0.5
+                                }}>
+                                <Pressable 
+                                    onPress={() => {
+                                        Clipboard.setString(wallet.compressPublicKey)
+                                        Toast.show('复制成功', {
+                                            position: Toast.positions.CENTER,
+                                            shadow: false
+                                        })
+                                    }}>
+                                    <Text style={tailwind(`text-base`)}>
+                                        {wallet.compressPublicKey}
+                                    </Text>
+                                </Pressable>
+                            </View>
+                            <View
+                                style={{
+                                    ...tailwind(`relative bg-white py-3 px-3`),
+                                    borderColor: '#ddd',
+                                    borderBottomWidth: 0.5
+                                }}>
                                 {
                                     showPrivateKey ? <></> :
                                     <>

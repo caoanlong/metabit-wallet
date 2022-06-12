@@ -190,6 +190,9 @@ export const getTokens = () => {
         Metabit.getContractTokens().then(res => {
             const tokenList = res.data.data as ContractToken[]
             for (let i = 0; i < tokenList.length; i++) {
+                if (tokenList[i].address === '0x0') {
+                    tokenList[i].isSelect = true
+                }
                 if (!tokenKeys.includes(tokenList[i].symbol + tokenList[i].network)) {
                     tokens.push(tokenList[i])
                 }
