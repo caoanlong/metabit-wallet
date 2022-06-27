@@ -123,3 +123,8 @@ package-lock.json
 
 # Android memory profiler files
 *.hprof
+ios/.DS_Store
+ios/Pods/.DS_Store
+ios/Pods/boost/boost/.DS_Store
+ios/Pods/Flipper-Boost-iOSX/boost/.DS_Store
+ios/Pods/Headers/.DS_Store
