@@ -217,27 +217,12 @@ function compare(p: string){ //这是比较函数
  */
 export const getNetworks = () => {
     return (dispatch: Dispatch<AnyAction>, getState: any) => {
-        const networks: Network[] = getState().wallet.networks
         const selectedNetwork: Network = getState().wallet.selectedNetwork
-        const networkNames: string[] = networks.map(item => item.shortName)
-        // dispatch({ type: SET_NETWORK, payload: [] })
         Metabit.getNetworks().then(res => {
             const networkList = res.data.data as Network[]
-            for (let i = 0; i < networkList.length; i++) {
-                const network = networkList[i]
-                if (!networkNames.includes(network.shortName)) {
-                    networks.push(network)
-                } else {
-                    for (let j = 0; j < networks.length; j++) {
-                        if (networks[j].shortName === network.shortName) {
-                            networks[j].apiUrl = network.apiUrl
-                        }
-                    }
-                }
-            }
-            dispatch({ type: SET_NETWORK, payload: networks })
+            dispatch({ type: SET_NETWORK, payload: networkList })
             if (!selectedNetwork || !selectedNetwork.name) {
-                dispatch({ type: SET_SELECTED_NETWORK, payload: networks[0] })
+                dispatch({ type: SET_SELECTED_NETWORK, payload: networkList[0] })
             }
         })
     }
@@ -257,7 +242,7 @@ export const getBalance = (cb?: () => void) => {
         const selectedNetwork: Network = getState().wallet.selectedNetwork
         const selectedWallet: HDWallet = getState().wallet.selectedWallet
         const tokens: ContractToken[] = getState().wallet.tokens
-        if (selectedWallet.chain === 'Ethereum' && selectedNetwork.hdIndex === 60) {
+        if (selectedWallet.chain === 'Ethereum' && selectedNetwork.chainType === 60) {
             const provider = new ethers.providers.JsonRpcProvider(selectedNetwork.apiUrl)
             const wallet = new Wallet(selectedWallet.privateKey, provider)
             for (let i = 0; i < tokens.length; i++) {
@@ -272,7 +257,7 @@ export const getBalance = (cb?: () => void) => {
                     }
                 }
             }
-        } else if (selectedWallet.chain === 'Tron' && selectedNetwork.hdIndex === 195) {
+        } else if (selectedWallet.chain === 'Tron' && selectedNetwork.chainType === 195) {
             const privateKey = selectedWallet.privateKey.replace(/^(0x)/, '')
             const tronWeb = new TronWeb({ 
                 fullHost: selectedNetwork.apiUrl, 

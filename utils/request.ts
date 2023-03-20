@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 
 const service = axios.create({
-    baseURL: 'https://uc.runfast123.com',
-    timeout: 60000
+    baseURL: 'https://test-metabit.metarsier.com',
+    timeout: 10000
 })
 
 service.interceptors.request.use((config: AxiosRequestConfig) => {

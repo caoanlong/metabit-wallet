@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Platform, Pressable, StatusBar, Text, useColorScheme, View } from "react-native"
 import { useSelector, useDispatch } from 'react-redux'
 import { ParamListBase, useNavigation } from "@react-navigation/native"
@@ -15,7 +15,7 @@ function Networks() {
     const selectedNetwork: Network = useSelector((state: RootState) => state.wallet.selectedNetwork)
     const selectedWallet: HDWallet = useSelector((state: RootState) => state.wallet.selectedWallet)
     const networks: Network[] = useSelector((state: RootState) => {
-        return state.wallet.networks.filter((item: Network) => item.hdIndex === selectedWallet.type)
+        return state.wallet.networks.filter((item: Network) => item.chainType === selectedWallet.type)
     })
 
     return (

@@ -41,21 +41,20 @@ interface ContractToken {
     chainType: string,
     network: string,
     isSelect: boolean,
-    createTime: Date,
-    updateTime: Date
+    createTime: string,
+    updateTime: string
 }
 
 interface Network {
     id: number,
     name: string,
     shortName: string,
-    type: string,
-    hdIndex: number,
-    isTest: false,
+    networkType: string,
+    chainType: number,
     apiUrl: string,
     scanUrl: string,
-    createTime: Date,
-    updateTime: Date
+    createTime: string,
+    updateTime: string
 }
 
 declare module "@metamask/contract-metadata" {

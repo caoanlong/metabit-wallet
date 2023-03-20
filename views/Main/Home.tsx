@@ -20,7 +20,6 @@ import { ParamListBase, useNavigation } from "@react-navigation/core"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootState } from "../../store"
 import { hideAddress } from "../../utils"
-import { STATIC_URL } from "../../config"
 import { getBalance } from "../../store/actions/walletAction"
 import HeaderBar from "../../components/HeaderBar"
 
@@ -208,7 +207,7 @@ function Home() {
                                         }}>
                                         <Image
                                             style={tailwind(`w-10 h-10 mr-4 rounded-full bg-gray-200`)}
-                                            source={{ uri: STATIC_URL + item.icon }}
+                                            source={{ uri: item.icon }}
                                         />
                                         <Text style={tailwind(`text-black text-xl`)}>{item.symbol}</Text>
                                         <View style={tailwind(`flex-1`)}>

@@ -1,16 +1,15 @@
 import request from "../utils/request"
 
-const url = '/metabit'
 
 function getNetworks() {
     return request({
-        url: url + '/network/findAll'
+        url: '/networks'
     })
 }
 
 function getContractTokens() {
     return request({
-        url: url + '/contractToken/findAll'
+        url: '/tokens'
     })
 }
 
