@@ -163,7 +163,7 @@ interface CreateHDWalletProps {
  * @returns 
  */
  export function createHDWallet({ mnemonic, index = 0 }: CreateHDWalletProps): HDWallet {
-    // if (mnemonic && !isValidMnemonic(mnemonic)) throw new Error("助记词无效")
+    if (mnemonic && !isValidMnemonic(mnemonic)) throw new Error("助记词无效")
     if (!mnemonic) {
         mnemonic = generateMnemonic()
     }
